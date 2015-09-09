@@ -1,4 +1,5 @@
 FROM xcentos:7
+RUN yum update -y
 RUN yum install -y gcc.x86_64
 RUN yum install -y automake.noarch
 
