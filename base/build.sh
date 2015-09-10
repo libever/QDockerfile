@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build -t qdocker/base:7
+docker build -t qdocker/base:7 .
