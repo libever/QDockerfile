@@ -1,11 +1,12 @@
 FROM qdocker/base:7
 
 RUN mkdir /sw
-ADD nginx-1.9.3.tar.gz /sw/
-ADD install_nginx.sh /sw/install_nginx.sh
-RUN /bin/sh /sw/install_nginx.sh
+ADD php-5.4.20.tar.gz /sw/
+ADD ./install_fpm.sh /sw/install_fpm.sh
+RUN yum install -y bison-devel.x86_64
+RUN /bin/bash /sw/install_fpm.sh
 
-#ENTRYPOINT /nginx/sbin/nginx && /bin/bash
+ENTRYPOINT /php5/sbin/php-fpm && /bin/bash
 
 
 
