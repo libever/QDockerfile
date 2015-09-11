@@ -1,3 +1,5 @@
 #!/bin/sh
 
-screen -S dockerredis docker run -i -t -p 8001:6379 qdocker/redis:7 
+dparams="--name redis -i -t -p 8001:6379 "
+
+screen -S dockerredis docker run $dparams qdocker/redis:7 
