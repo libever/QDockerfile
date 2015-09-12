@@ -13,5 +13,7 @@ then
 	sh build.sh
 else
 	rm php-5.4.20.tar.gz
+	echo "################"
+	echo "php-5.4.20 get error ... try to change other version of php ."
 fi
 fi
