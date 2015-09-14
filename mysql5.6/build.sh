@@ -2,8 +2,7 @@
 
 if [ -f ./mysql-5.6.21.tar.gz ]
 then
-docker build -t qdocker/mysql5:7 .
+	docker build -t qdocker/mysql56:7 .
 else 
-wget 
+	echo "find file : mysql-5.6.21.tar.gz"
 fi
-
