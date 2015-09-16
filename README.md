@@ -1,12 +1,7 @@
 my docker files do make some common environment.
-
 =======
-
 This is some images made by myself.
-
 =======
-
-
 Very base file named xcentos:7 is from tar.gz file , Make base shell is :
 <pre>
 <code>
