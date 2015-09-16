@@ -1,4 +1,4 @@
 #!/bin/sh
 
-docker rmi $(docker images | grep "<none>" | awk '{print $3}')
-docker rm $(docker ps -a | grep "Exit" | awk '{print $1}' )
+docker rmi -f  $(docker images | grep "<none>" | awk '{print $3}')
+docker rm -f $(docker ps -a | grep "Exit" | awk '{print $1}' )
