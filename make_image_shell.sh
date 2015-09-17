@@ -28,7 +28,16 @@ EOF
 cat > $image_name/start.sh<<EOF
 #!/bin/sh
 
-d=\$(readlink -f ../code)
+SYSTEM=`uname -s` 
+if [  \$SYSTEM = "Darwin" ] 
+then
+	d=\$(greadlink -f ../code)
+else 
+	d=\$(readlink -f ../code)
+fi
+
+
+
 dparams="--name nginx -i -t -p 8000:80 -v \$d:/code"
 dparams="\$dparams --privileged=true "
 screen -S docker$image_name docker run \$dparams qdocker/$image_name:7 
