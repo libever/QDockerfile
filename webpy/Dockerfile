@@ -1,7 +1,7 @@
 FROM qdocker/base:7
-RUN mkdir /sw
+RUN mkdir -p /sw/packages
 
-ADD web.py-0.33.tar.gz /sw/
+ADD packages /sw/packages
 ADD install_webpy.sh /sw/install_webpy.sh
 RUN /bin/sh /sw/install_webpy.sh
 
