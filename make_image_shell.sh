@@ -1,7 +1,7 @@
 #!/bin/sh
 
 image_name=$1
-from_base=base
+from_base="qdocker/base:7"
 
 mkdir $image_name
 touch $image_name/Dockerfile
@@ -13,7 +13,7 @@ cat > $image_name/Dockerfile <<EOF
 FROM $from_base
 RUN mkdir /sw
 
-ADD install_${image_name}.sh
+ADD install_${image_name}.sh /sw/install_${image_name}.sh
 RUN /bin/sh install_${image_name}.sh
 
 ENTRYPOINT /bin/bash
