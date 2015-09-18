@@ -14,7 +14,7 @@ FROM $from_base
 RUN mkdir /sw
 
 ADD install_${image_name}.sh /sw/install_${image_name}.sh
-RUN /bin/sh install_${image_name}.sh
+RUN /bin/sh /sw/install_${image_name}.sh
 
 ENTRYPOINT /bin/bash
 
@@ -38,7 +38,7 @@ fi
 
 
 
-dparams="--name nginx -i -t -p 8000:80 -v \$d:/code"
+dparams="--name $image_name -i -t -p 8000:80 -v \$d:/code"
 dparams="\$dparams --privileged=true "
 screen -S docker$image_name docker run \$dparams qdocker/$image_name:7 
 
