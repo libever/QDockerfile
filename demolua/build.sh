@@ -1,7 +1,7 @@
 #!/bin/sh
 
-file_name=""
-file_url=""
+file_name="lua-5.3.1.tar.gz"
+file_url="http://www.lua.org/ftp/lua-5.3.1.tar.gz"
 
 if [ -f $file_name ] 
 then

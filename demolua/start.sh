@@ -10,7 +10,7 @@ fi
 
 
 
-dparams="--name demolua -i -t -p 8000:80 -v $d:/code"
+dparams="--name demolua -i -t -v $d:/code"
 dparams="$dparams --privileged=true "
 screen -S dockerdemolua docker run $dparams qdocker/demolua:7 
 
