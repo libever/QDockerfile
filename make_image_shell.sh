@@ -28,7 +28,7 @@ EOF
 cat > $image_name/start.sh<<EOF
 #!/bin/sh
 
-SYSTEM=`uname -s` 
+SYSTEM=\$(uname -s)
 if [  \$SYSTEM = "Darwin" ] 
 then
 	d=\$(greadlink -f ../code)
