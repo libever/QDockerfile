@@ -9,4 +9,11 @@ else
 fi
 mkdir -p $vdir
 dparams="--name redis -i -t -p 8001:6379 -v $vdir:/blackhole"
-screen -S dockerredis docker run $dparams qdocker/redis:7 
+
+r=$(docker exec redis /bin/sh -c "echo OK")
+if [ "$r" == "OK" ]
+then
+	screen -x dockerredis
+else
+	screen -S dockerredis docker run $dparams qdocker/redis:7 
+fi
