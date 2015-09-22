@@ -1,14 +1,12 @@
 #!/bin/sh
 
-SYSTEM=Darwin 
+SYSTEM=$(uname)
 if [  $SYSTEM = "Darwin" ] 
 then
-	d=$(greadlink -f ../code)
+    d=$(greadlink -f ../code)
 else 
-	d=$(readlink -f ../code)
+    d=$(readlink -f ../code)
 fi
-
-
 
 dparams="--name demolua -i -t -v $d:/code"
 dparams="$dparams --privileged=true "
