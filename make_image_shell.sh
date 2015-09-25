@@ -75,7 +75,7 @@ EOF
 cat > $image_name/clean.sh <<EOF
 #!/bin/sh
 
-docker rmi -f $image_name 
+docker rmi -f qdocker/$image_name:7
 
 EOF
 
