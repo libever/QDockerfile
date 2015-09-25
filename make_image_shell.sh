@@ -8,6 +8,7 @@ touch $image_name/Dockerfile
 touch $image_name/install_${image_name}.sh
 touch $image_name/build.sh
 touch $image_name/start.sh
+touch $image_name/clean.sh
 
 cat > $image_name/Dockerfile <<EOF
 FROM $from_base
@@ -28,28 +29,61 @@ EOF
 cat > $image_name/start.sh<<EOF
 #!/bin/sh
 
+#custom_edit_code 
+
+docker_name=$image_name
+image_name=qdocker/$image_name:7
+docker_name=$image_name
+screen_name=docker\${docker_name}
+blackhole_real_dir="../code/\$screen_name"
+o_ports=" -p 9001:9001"
+
+#end custom_edit_code 
+
+
+
 SYSTEM=\$(uname -s)
-if [  \$SYSTEM = "Darwin" ] 
+if [ \$SYSTEM == "Darwin" ] 
 then
-	d=\$(greadlink -f ../code)
-else 
-	d=\$(readlink -f ../code)
+	Greadlink=greadlink
+else
+	Greadlink=readlink
 fi
+vdir=\$(\$Greadlink -f \$blackhole_real_dir)	
+echo \$vdir
+mkdir -p \$vdir
+dparams="--name \$docker_name -i -t \$o_ports  -v \$vdir:/blackhole -w /blackhole"
+dparams="--privileged=true \$dparams"
 
-
-
-dparams="--name $image_name -i -t -p 8000:80 -v \$d:/code"
-dparams="\$dparams --privileged=true "
-screen -S docker$image_name docker run \$dparams qdocker/$image_name:7 
+r=\$(docker exec \$docker_name /bin/sh -c "echo OK" 2>&1 )
+if [ "\$r" == "OK" ]
+then
+	echo "already running  "
+	screen -x \$screen_name
+elif [[ "\$r" =~ "no such id" ]]
+then
+   echo "not exist , not running , run  "
+	 screen -S \$screen_name docker run \$dparams \$image_name
+else
+    echo "exist , not running , run and attach "
+    screen -S \$screen_name /bin/bash -c "docker start \$docker_name && docker attach \$docker_name"
+fi
 
 EOF
 
-cat > $image_name/build.sh<<EOF
+
+cat > $image_name/clean.sh <<EOF
 #!/bin/sh
 
+docker rmi -f $image_name 
+
+EOF
+
+
+cat > $image_name/build.sh <<EOF
+#!/bin/sh
 file_name=""
 file_url=""
-
 if [ -f \$file_name ] 
 then
 docker build -t qdocker/$image_name:7 .
@@ -66,5 +100,5 @@ else
 	echo "\$file_name get error ... try to change other version of $image_name ."
 fi
 fi
-
 EOF
+
