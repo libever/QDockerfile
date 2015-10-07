@@ -1,0 +1,11 @@
+<div id="message">
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+var socket = io();
+function sendmessage(){
+	alert(3);
+	socket.emit("hello world","Hello world");
+}
+</script>
+<a onclick="sendmessage()" href="javascript:;">Send Message</a>
