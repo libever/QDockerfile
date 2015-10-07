@@ -3,12 +3,17 @@
 image_name=$1
 from_base="qdocker/base:7"
 
-mkdir $image_name
-touch $image_name/Dockerfile
-touch $image_name/install_${image_name}.sh
-touch $image_name/build.sh
-touch $image_name/start.sh
-touch $image_name/clean.sh
+
+function makedir(){
+	mkdir $image_name
+	touch $image_name/Dockerfile
+	touch $image_name/install_${image_name}.sh
+	touch $image_name/build.sh
+	touch $image_name/start.sh
+	touch $image_name/clean.sh
+}
+
+function makeDockerfile(){
 
 cat > $image_name/Dockerfile <<EOF
 FROM $from_base
@@ -21,17 +26,21 @@ ENTRYPOINT /bin/bash
 
 EOF
 
+}
+
+function makeInstallImagesh(){
 cat > $image_name/install_${image_name}.sh<<EOF
 #!/bin/sh
 
 
-
-
 binPath="/$image_name/bin"
-echo "PATH=\\$PATH:\$binPath" >> /etc/bashrc
+echo "PATH=\\\$PATH:\$binPath" >> /etc/bashrc
 
 EOF
 
+}
+
+function makeStartImagesh(){
 cat > $image_name/start.sh<<EOF
 #!/bin/sh
 
@@ -76,16 +85,18 @@ else
 fi
 
 EOF
+}
 
-
+function makeCleansh(){
 cat > $image_name/clean.sh <<EOF
 #!/bin/sh
 
 docker rmi -f qdocker/$image_name:7
 
 EOF
+}
 
-
+function makeBuildsh(){
 cat > $image_name/build.sh <<EOF
 #!/bin/sh
 file_name=""
@@ -108,4 +119,24 @@ fi
 fi
 
 EOF
+}
+
+
+if [ "$2" == "remakescript" ] 
+then
+
+	echo "remake script"
+
+	exit
+
+elif [ "$2" == "" ] 
+then
+	makedir
+	makeDockerfile
+	makeCleansh
+	makeBuildsh
+	makeInstallImagesh
+	makeStartImagesh
+fi
+
 
