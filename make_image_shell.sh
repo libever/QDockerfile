@@ -121,22 +121,24 @@ fi
 EOF
 }
 
-
-if [ "$2" == "remakescript" ] 
-then
-
-	echo "remake script"
-
-	exit
-
-elif [ "$2" == "" ] 
-then
-	makedir
+function makeScript(){
 	makeDockerfile
 	makeCleansh
 	makeBuildsh
 	makeInstallImagesh
 	makeStartImagesh
+}
+
+
+if [ "$2" == "remakescript" ] 
+then
+	echo "remake script"
+	makeScript
+	exit
+elif [ "$2" == "" ] 
+then
+	makedir
+	makeScript
 fi
 
 
