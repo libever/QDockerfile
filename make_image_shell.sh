@@ -52,6 +52,7 @@ docker_name=$image_name
 screen_name=docker\${docker_name}
 blackhole_real_dir="../code/\$screen_name"
 o_ports=" -p 9001:9001"
+other_params="  "
 
 #end custom_edit_code 
 
@@ -67,7 +68,7 @@ fi
 vdir=\$(\$Greadlink -f \$blackhole_real_dir)	
 echo \$vdir
 mkdir -p \$vdir
-dparams="--name \$docker_name -i -t \$o_ports  -v \$vdir:/blackhole -w /blackhole"
+dparams="--name \$docker_name -i -t \$o_ports  -v \$vdir:/blackhole $other_params -w /blackhole"
 dparams="--privileged=true \$dparams"
 
 r=\$(docker exec \$docker_name /bin/sh -c "echo OK" 2>&1 )
