@@ -24,6 +24,12 @@ EOF
 cat > $image_name/install_${image_name}.sh<<EOF
 #!/bin/sh
 
+
+
+
+binPath="/$image_name/bin"
+echo "PATH=\\$PATH:\$binPath" >> /etc/bashrc
+
 EOF
 
 cat > $image_name/start.sh<<EOF
@@ -100,5 +106,6 @@ else
 	echo "\$file_name get error ... try to change other version of $image_name ."
 fi
 fi
+
 EOF
 
