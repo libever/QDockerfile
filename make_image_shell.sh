@@ -130,8 +130,18 @@ function makeScript(){
 }
 
 
-if [ "$2" == "remakescript" ] 
+if [ "$2" == "remake" ] 
 then
+
+	if [ "$3" == "" ] 
+	then 
+		echo "choose remake which file"
+		echo "\033[5;31;1m"
+		echo "Dockerfile Cleansh Buildsh InstallImagesh StartImagesh"
+		echo "\033[0m"
+		exit
+	fi
+
 	echo "remake script"
 	makeScript
 	exit
