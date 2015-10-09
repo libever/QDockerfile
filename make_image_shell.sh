@@ -1,8 +1,15 @@
-#!/bin/sh
+#!/bin/bash
+
+SYSTEM=$(uname -s)
+if [ "$SYSTEM" == "Darwin" ] 
+then
+	alias echoe="echo"
+else
+	alias echoe="echo -e"
+fi
 
 image_name=$1
 from_base="qdocker/base:7"
-
 
 function makedir(){
 	mkdir $image_name
@@ -32,7 +39,6 @@ function makeInstallImagesh(){
 cat > $image_name/install_${image_name}.sh<<EOF
 #!/bin/sh
 
-
 binPath="/$image_name/bin"
 echo "PATH=\\\$PATH:\$binPath" >> /etc/bashrc
 
@@ -55,8 +61,6 @@ o_ports=" -p 9001:9001"
 other_params="  "
 
 #end custom_edit_code 
-
-
 
 SYSTEM=\$(uname -s)
 if [ \$SYSTEM == "Darwin" ] 
@@ -130,34 +134,32 @@ function makeScript(){
 	makeStartImagesh
 }
 
+function flashwords(){
+echoe  "\033[5;31;1m"
+echo $1
+echoe  "\033[0m"
+}
 
 if [ "$2" == "remake" ] 
 then
-
 	if [ "$3" == "" ] 
 	then 
-		echo "choose remake which file"
-		echo "\033[5;31;1m"
-		echo "Dockerfile Cleansh Buildsh InstallImagesh StartImagesh All"
-		echo "\033[0m"
+		#echo "choose remake which file"
+		flashwords "Dockerfile Cleansh Buildsh InstallImagesh StartImagesh All"
 		exit
 	fi
-
-
 	if [ $3 == "All" ]
 	then
 		echo "remake script"
 		makeScript
 	fi
-
 	c="make${3}"
 	$c
-
 	exit
-elif [ "$2" == "" ] 
+elif [ "$1" == "" ] 
 then
+	flashwords "ERROR : usage sh $0 <newImageName> <remake> <Dockerfile Cleansh Buildsh InstallImagesh StartImagesh All>"
+else
 	makedir
 	makeScript
 fi
-
-
