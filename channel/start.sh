@@ -22,9 +22,9 @@ else
 	Greadlink=readlink
 fi
 vdir=$($Greadlink -f $blackhole_real_dir)	
-echo $vdir
+tooldir=$($Greadlink -f "../code/tools")	
 mkdir -p $vdir
-dparams="--name $docker_name -i -t $o_ports  -v $vdir:/blackhole $other_params -w /blackhole"
+dparams="--name $docker_name -i -t $o_ports -v $tooldir:/tools -v $vdir:/blackhole $other_params -w /blackhole"
 dparams="--privileged=true $dparams"
 
 r=$(docker exec $docker_name /bin/sh -c "echo OK" 2>&1 )
