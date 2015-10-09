@@ -2,8 +2,11 @@
 
 var app = require("express")();
 var http = require('http').Server(app);
-
+var otherhttp = require('http').Server(app);
 var io = require('socket.io')(http);
+
+var channel = require("./channel").init(http,http,http);
+
 //"you can find client script on url : /socket.io/socket.io.js"
 
 io.on("connection",function(socket){
@@ -25,7 +28,13 @@ app.get("/",function(request,response){
 	response.sendFile(__dirname + "/a.html");
 });
 
+app.post("/channel/create",function(request,response){
+
+});
+
+
 http.listen(9001, function(){
   console.log('listening on *:9001');
 });
+
 
