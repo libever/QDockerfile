@@ -138,13 +138,21 @@ then
 	then 
 		echo "choose remake which file"
 		echo "\033[5;31;1m"
-		echo "Dockerfile Cleansh Buildsh InstallImagesh StartImagesh"
+		echo "Dockerfile Cleansh Buildsh InstallImagesh StartImagesh All"
 		echo "\033[0m"
 		exit
 	fi
 
-	echo "remake script"
-	makeScript
+
+	if [ $3 == "All" ]
+	then
+		echo "remake script"
+		makeScript
+	fi
+
+	c="make${3}"
+	$c
+
 	exit
 elif [ "$2" == "" ] 
 then
