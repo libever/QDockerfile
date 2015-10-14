@@ -25,8 +25,17 @@ Content-Type: text/html\r\n\
 <BODY><P>HTTP request method not supported.\r\n\
 </BODY></HTML>\r\n"
 
-static int server_socket;
+#define NOT_FOUND_STRING "HTTP/1.0 404 NOT FOUND\r\n\
+Server: jdbhttpd/0.1.0\r\n\
+Content-Type: text/html\r\n\
+\r\n\
+<HTML><TITLE>Not Found</TITLE>\r\n\
+<BODY><P>The server could not fulfill\r\n\
+your request because the resource specified\r\n\
+is unavailable or nonexistent.\r\n\
+</BODY></HTML>\r\n"
 
+static int server_socket;
 
 #define ISspace(x) isspace((int)(x))
 void accept_request(int*);
@@ -41,6 +50,7 @@ void not_found(int);
 void serve_file(int, const char *);
 int startup(u_short *);
 void unimplemented(int);
+void StopServer();
 
 
 

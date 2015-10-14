@@ -119,6 +119,7 @@ void cat(int client, FILE *resource) {
 }
 
 void error_die(const char *sc) {
+	printf("error happend process died ... ");
 	perror(sc);
 	exit(1);
 }
@@ -239,7 +240,7 @@ int get_line(int sock, char *buf, int size) {
 
 void headers(int client, const char *filename) {
 	char buf[1024];
-	(void)filename;  /* could use filename to determine file type */
+	(void)filename; 
 
 	strcpy(buf, "HTTP/1.0 200 OK\r\n");
 	send(client, buf, strlen(buf), 0);
@@ -252,27 +253,7 @@ void headers(int client, const char *filename) {
 }
 
 void not_found(int client) {
-	char buf[1024];
-
-	sprintf(buf, "HTTP/1.0 404 NOT FOUND\r\n");
-	send(client, buf, strlen(buf), 0);
-	sprintf(buf, SERVER_STRING);
-	send(client, buf, strlen(buf), 0);
-	sprintf(buf, "Content-Type: text/html\r\n");
-	send(client, buf, strlen(buf), 0);
-	sprintf(buf, "\r\n");
-	send(client, buf, strlen(buf), 0);
-	sprintf(buf, "<HTML><TITLE>Not Found</TITLE>\r\n");
-	send(client, buf, strlen(buf), 0);
-	sprintf(buf, "<BODY><P>The server could not fulfill\r\n");
-	send(client, buf, strlen(buf), 0);
-	sprintf(buf, "your request because the resource specified\r\n");
-	send(client, buf, strlen(buf), 0);
-	sprintf(buf, "is unavailable or nonexistent.\r\n");
-	send(client, buf, strlen(buf), 0);
-	sprintf(buf, "</BODY></HTML>\r\n");
-	send(client, buf, strlen(buf), 0);
-
+	send(client, NOT_FOUND_STRING, strlen(NOT_FOUND_STRING), 0);
 }
 
 void serve_file(int client, const char *filename) {
@@ -318,7 +299,7 @@ int startup(u_short *port) {
 		}
 		*port = ntohs(name.sin_port);
 	}
-	if (listen(httpd, 5) < 0) {
+	if (listen(httpd, 128) < 0) {
 		error_die("listen");
 	}
 	return(httpd);
@@ -333,7 +314,6 @@ void StopServer(){
 int main(void) {
 
 	int timeoutsetres;
-	/*int server_sock = -1;*/
 	u_short port = 1025;
 	int client_sock = -1;
 	struct sockaddr_in client_name;
@@ -346,6 +326,7 @@ int main(void) {
 	signal(SIGINT, StopServer); 
 
 	while (1) {
+
 		client_sock = accept(server_socket, (struct sockaddr *)&client_name, (socklen_t *)&client_name_len);
 		timeoutsetres = setsockopt(client_sock,SOL_SOCKET,SO_SNDTIMEO,(const char*)&timeout,sizeof(timeout));
 		timeoutsetres = setsockopt(client_sock,SOL_SOCKET,SO_RCVTIMEO,(const char*)&timeout,sizeof(timeout));
