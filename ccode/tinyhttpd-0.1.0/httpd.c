@@ -14,6 +14,24 @@
 
 #include "httpd.h"
 
+void bad_request(int client) {
+	send(client, BADSTRING, strlen(BADSTRING), 0);
+}
+
+void cannot_execute(int client) {
+	send(client, INTERNAL_SERVER_ERROR_STRING, strlen(INTERNAL_SERVER_ERROR_STRING), 0);
+}
+
+void unimplemented(int client) {
+	send(client, METHOD_NOT_FOUND_STRING , strlen(METHOD_NOT_FOUND_STRING), 0);
+}
+
+void error_die(const char *sc) {
+	printf("error happend process died ... ");
+	perror(sc);
+	exit(1);
+}
+
 void accept_request(int *transfterclient) {
 	int client = *transfterclient;
 	char buf[1024];
@@ -97,31 +115,13 @@ void accept_request(int *transfterclient) {
 	close(client);
 }
 
-void bad_request(int client) {
-	send(client, BADSTRING, strlen(BADSTRING), 0);
-}
-
-void cannot_execute(int client) {
-	send(client, INTERNAL_SERVER_ERROR_STRING, strlen(INTERNAL_SERVER_ERROR_STRING), 0);
-}
-
-void unimplemented(int client) {
-	send(client, METHOD_NOT_FOUND_STRING , strlen(METHOD_NOT_FOUND_STRING), 0);
-}
-
 void cat(int client, FILE *resource) {
 	char buf[1024];
-	fgets(buf, sizeof(buf), resource);
-	while (!feof(resource)) {
+	do {
+		fgets(buf, 1024, resource);
 		send(client, buf, strlen(buf), 0);
-		fgets(buf, sizeof(buf), resource);
-	}
-}
-
-void error_die(const char *sc) {
-	printf("error happend process died ... ");
-	perror(sc);
-	exit(1);
+		bzero(buf,1024);
+	} while(!feof(resource));
 }
 
 void execute_cgi(int client, const char *path, const char *method, const char *query_string) {
