@@ -1,5 +1,19 @@
-#ifndef HTTPD_COMMON_STRING_H
-#define HTTPD_COMMON_STRING_H
+#ifndef HTTPD_COMMON_H
+#define HTTPD_COMMON_H
+
+#include <stdio.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <ctype.h>
+#include <strings.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <pthread.h>
+#include <sys/wait.h>
+#include <stdlib.h>
 
 
 #define SERVER_STRING "Server: jdbhttpd/0.1.0\r\n"
@@ -38,6 +52,7 @@ is unavailable or nonexistent.\r\n\
 static int server_socket;
 
 #define ISspace(x) isspace((int)(x))
+
 void accept_request(int*);
 void bad_request(int);
 void cat(int, FILE *);
@@ -51,7 +66,6 @@ void serve_file(int, const char *);
 int startup(u_short *);
 void unimplemented(int);
 void StopServer();
-
 
 
 #endif

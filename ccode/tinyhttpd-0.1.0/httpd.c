@@ -1,17 +1,3 @@
-#include <stdio.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <ctype.h>
-#include <strings.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <pthread.h>
-#include <sys/wait.h>
-#include <stdlib.h>
-
 #include "httpd.h"
 
 void bad_request(int client) {
@@ -24,6 +10,10 @@ void cannot_execute(int client) {
 
 void unimplemented(int client) {
 	send(client, METHOD_NOT_FOUND_STRING , strlen(METHOD_NOT_FOUND_STRING), 0);
+}
+
+void not_found(int client) {
+	send(client, NOT_FOUND_STRING, strlen(NOT_FOUND_STRING), 0);
 }
 
 void error_die(const char *sc) {
@@ -252,9 +242,6 @@ void headers(int client, const char *filename) {
 	send(client, buf, strlen(buf), 0);
 }
 
-void not_found(int client) {
-	send(client, NOT_FOUND_STRING, strlen(NOT_FOUND_STRING), 0);
-}
 
 void serve_file(int client, const char *filename) {
 	FILE *resource = NULL;
