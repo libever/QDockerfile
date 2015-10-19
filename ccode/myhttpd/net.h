@@ -23,7 +23,8 @@ void closeServer(NServer *myServer);
 void loopServer(NServer *myServer ,loopHanlder handler);
 NServer* initNServer(int port);
 int readLine(NClient *myServer,char* buf,int size);
-int writeLine(NClient *myServer,char* buf,int size);
+int readSize(NClient *myServer,char* buf,int size);
+int writeData(NClient *myServer,char* buf,int size);
 NClient * readMyClient(NServer *myServer,int seconds);
 void freeClient(NClient *client);
 

@@ -9,5 +9,6 @@ void loopMainHandler(NServer *);
 void handlerGetRequest(NServer *);
 void handlerPostRequest(NServer *);
 void cgiRequest(NServer *);
+void infoClient(NClient *,char*);
 
 #endif

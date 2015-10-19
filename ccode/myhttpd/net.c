@@ -42,24 +42,53 @@ NServer* initNServer(int port) {
 }
 
 int readLine(NClient *client,char* buf,int size) {
-	int n;
-	n = recv(client->clientSocket, buf, size , 0);
-	return n;
+	int pos = 0 ;
+	char c = '\0';
+	int res = 0;
+	int lineEnd = 0;
+
+	for( ; pos < ( size - 1 ) ; pos++){
+		res = recv(client->clientSocket,&c,1,0);			
+		if( res <= 0 ) {
+			return res;	
+		}
+		buf[pos] = c;
+		switch(c) {
+			case '\r':
+				break;	
+			case '\n':
+				lineEnd = 1;	
+				break;
+			default:
+				if( pos != 0 && buf[pos-1] == '\r') {
+					printf("D ERROR : ....\n");
+					return -1;
+				} 
+		}
+		if(1 == lineEnd) {
+			break;	
+		}
+	} 
+	buf[pos] = '\0';
+	return pos;
 }
 
-int writeLine(NClient *client,char* buf,int size) {
-	return size;
+int readSize(NClient *client,char* buf, int size) {
+	return recv(client->clientSocket,buf,size,0);
+}
+
+int writeData(NClient *client,char* buf,int size) {
+	return send(client->clientSocket,buf,size,0);
 }
 
 NClient * readMyClient(NServer *myServer,int seconds){
 	NClient *newClient ;
-	int socket;
 	int timeoutres;
 	struct timeval timeout = {seconds,0};
 	int clientAddrSize = sizeof(newClient->clientAddress);
 
 	newClient	= (struct NetClient *) malloc(sizeof(struct NetClient));
-	newClient->clientSocket = accept(myServer->serverSocket,&newClient->clientAddress,&clientAddrSize);
+	newClient->clientSocket = accept(myServer->serverSocket,(struct sockaddr *)&newClient->clientAddress,(socklen_t *)&clientAddrSize);
 
 	if(newClient->clientSocket == -1) {
 		ExitMessage("accept failed ...");
