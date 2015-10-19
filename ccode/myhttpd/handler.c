@@ -5,6 +5,9 @@ void loopMainHandler(NServer *myServer) {
 	char buf[256] = {'\0'};
 	int bufsize = sizeof(buf);
 	NClient *client;
+	int handlerIndex = 0 , dealed = 0;
+	void (*handlerList[])(NClient *)  = {handlerGetRequest,handlerPostRequest,NULL};
+	void (*handler)(NClient *) = handlerList[0];
 
 	while(1){
 		client = readMyClient(myServer,90);		
@@ -12,23 +15,26 @@ void loopMainHandler(NServer *myServer) {
 		if( ( bufsize - 1 ) ==  readLine(client,buf,bufsize)){
 			infoClient(client,"URL IS TOO LONG ... \n");			
 		} else {
-				
+			do{
+				handler(client);
+				handler = handlerList[++handlerIndex];
+			} while (handler !=  NULL);
 		}
 		freeClient(client);
 	}
 
 }
 
-void handlerGetRequest(NServer *myServer) {
-
+void handlerGetRequest(NClient* client) {
+	printf("1s\n");
 }
 
-void handlerPostRequest(NServer *myServer) {
-
+void handlerPostRequest(NClient* client) {
+	printf("2s\n");
 }
 
-void cgiRequest(NServer *myServer) {
-
+void cgiRequest(NClient* client) {
+	printf("2s\n");
 }
 
 void infoClient(NClient *client,char* message) {

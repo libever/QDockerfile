@@ -6,9 +6,9 @@
 #include <sys/wait.h>
 
 void loopMainHandler(NServer *);
-void handlerGetRequest(NServer *);
-void handlerPostRequest(NServer *);
-void cgiRequest(NServer *);
+void handlerGetRequest(NClient *);
+void handlerPostRequest(NClient *);
+void cgiRequest(NClient *);
 void infoClient(NClient *,char*);
 
 #endif
