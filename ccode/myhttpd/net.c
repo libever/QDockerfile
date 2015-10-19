@@ -22,11 +22,14 @@ void loopServer(NServer *myServer ,loopHanlder handler) {
 NServer* initNServer(int port) {
 	NServer *newServer = (NServer*)malloc(sizeof(NServer));
 	struct sockaddr_in name;
+	int on = 1, ret;
 
 	newServer->serverSocket = socket(PF_INET, SOCK_STREAM, 0);
 	if (newServer->serverSocket == -1) {
 		ExitMessage("socket create error ");
 	}
+
+	ret = setsockopt(newServer->serverSocket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on) );
 
 	memset(&name, 0, sizeof(name));
 	name.sin_family = AF_INET;
