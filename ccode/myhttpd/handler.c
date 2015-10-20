@@ -2,38 +2,51 @@
 #include "common.h"
 
 void loopMainHandler(NServer *myServer) {
-	char buf[256] = {'\0'};
-	int bufsize = sizeof(buf);
 	NClient *client;
-	int handlerIndex = 0 , dealed = 0;
-	void (*handlerList[])(NClient *)  = {handlerGetRequest,handlerPostRequest,NULL};
-	void (*handler)(NClient *) = handlerList[0];
+	pthread_t newthread;
 
 	while(1){
 		client = readMyClient(myServer,90);		
-		bzero(buf,bufsize);
-		if( ( bufsize - 1 ) ==  readLine(client,buf,bufsize)){
-			infoClient(client,"URL IS TOO LONG ... \n");			
-		} else {
-			do{
-				handler(client);
-				handler = handlerList[++handlerIndex];
-			} while (handler !=  NULL);
-		}
-		freeClient(client);
+		loopRequest(client);
+	 /* if (pthread_create(&newthread , NULL, (void *(*)(void *))loopRequest, & client) != 0) { */
+			/*ExitMessage("thread create failed ... ");*/
+		/*}*/
 	}
 
 }
 
-void handlerGetRequest(NClient* client) {
-	printf("1s\n");
+void loopRequest(NClient *client){
+	char buf[256] = {'\0'};
+	int bufsize = sizeof(buf);
+	int handlerIndex = 0 , dealed = 0;
+	int (*handlerList[])(NClient *)  = {handlerGetRequest,handlerPostRequest,NULL};
+	int (*handler)(NClient *) = handlerList[0];
+
+	bzero(buf,bufsize);
+	if( ( bufsize - 1 ) ==  readLine(client,buf,bufsize)){
+		infoClient(client,"URL IS TOO LONG ... \n");			
+	} else {
+		do{
+			if ( HANDLED == handler(client) ){
+				break;	
+			}
+			handler = handlerList[++handlerIndex];
+		} while (handler !=  NULL);
+	}
+
+	freeClient(client);
 }
 
-void handlerPostRequest(NClient* client) {
+int handlerGetRequest(NClient* client) {
+	infoClient(client,"Hello world");
+	return HANDLED;
+}
+
+int handlerPostRequest(NClient* client) {
 	printf("2s\n");
 }
 
-void cgiRequest(NClient* client) {
+int cgiRequest(NClient* client) {
 	printf("2s\n");
 }
 

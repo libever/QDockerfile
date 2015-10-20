@@ -5,10 +5,13 @@
 #include <pthread.h>
 #include <sys/wait.h>
 
-void loopMainHandler(NServer *);
-void handlerGetRequest(NClient *);
-void handlerPostRequest(NClient *);
-void cgiRequest(NClient *);
-void infoClient(NClient *,char*);
+#define HANDLED 1
+#define FAILED 2 
 
+void loopMainHandler(NServer *);
+int handlerGetRequest(NClient *);
+int handlerPostRequest(NClient *);
+int cgiRequest(NClient *);
+void infoClient(NClient *,char*);
+void loopRequest(NClient *);
 #endif
