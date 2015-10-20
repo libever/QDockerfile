@@ -29,7 +29,7 @@ void loopMainHandler(NServer *myServer) {
 		}
 	}
 	for( process_count = 0 ; process_count < process_born ; process_count++ ) {
-		waitpid(pids[process_count],NULL,-1);	
+		waitpid(pids[process_count],NULL,0);	
 	}
 }
 
@@ -45,20 +45,29 @@ void * loopRequest(void *arg){
 	if( ( bufsize - 1 ) ==  readLine(client,buf,bufsize)){
 		infoClient(client,"URL IS TOO LONG ... \n",CONTENT_TYPE_HTML);			
 	} else {
-		do{
-			if ( HANDLED == handler(client) ){
-				requestRes = HANDLED;
-				break;	
+		if(FALSE == initClientMethodAndUrl(client,buf)){
+			infoClient(client,"URL IS TOO SHORT",CONTENT_TYPE_HTML);
+		} else {
+			do{
+				if ( HANDLED == handler(client) ){
+					requestRes = HANDLED;
+					break;	
+				}
+				handler = handlerList[++handlerIndex];
+			} while (handler !=  NULL);
+			if (HANDLED != requestRes) {
+				infoClient(client,"NO CODE TO DEAL WITH THIS REQUEST",CONTENT_TYPE_HTML);	
 			}
-			handler = handlerList[++handlerIndex];
-		} while (handler !=  NULL);
-		if (HANDLED != requestRes) {
-			infoClient(client,"NO CODE TO DEAL WITH THIS REQUEST",CONTENT_TYPE_HTML);	
 		}
 	}
 
 	freeClient(client);
 	return NULL;
+}
+
+int handleBySendFileContent(NClient *client){
+
+	return HANDLED;
 }
 
 int handlerGetRequest(NClient* client) {

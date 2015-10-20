@@ -12,7 +12,9 @@ void openServer(NServer *myServer) {
 
 void closeServer(NServer *myServer) {
 	close(myServer->serverSocket);	
-	free(myServer);
+	if(NULL != myServer) {
+		free(myServer);
+	}
 }
 
 void loopServer(NServer *myServer ,loopHanlder handler) {
@@ -99,7 +101,15 @@ NClient * readMyClient(NServer *myServer,int seconds){
 	return newClient;
 }
 
+BOOL initClientMethodAndUrl(NClient *client,char* firstLine) {
+	char methods[4] = {'\0'};
+	
+	return FALSE;
+}
+
 void freeClient(NClient *client){
 	close(client->clientSocket);
-	free(client);
+	if(NULL != client) {
+		free(client);
+	}
 }

@@ -1,6 +1,7 @@
 #ifndef MYHTTPD_NET_H
 #define MYHTTPD_NET_H
 
+#include "common.h"
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -29,7 +30,7 @@ int readLine(NClient *myServer,char* buf,int size);
 int readSize(NClient *myServer,char* buf,int size);
 int writeData(NClient *myServer,char* buf,int size);
 NClient * readMyClient(NServer *myServer,int seconds);
-void initClientMethodAndUrl(NClient *,char*);
+BOOL initClientMethodAndUrl(NClient *,char*);
 void freeClient(NClient *client);
 
 #endif
