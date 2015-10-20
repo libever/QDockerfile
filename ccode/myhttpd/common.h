@@ -9,5 +9,6 @@
 #include <time.h>
 
 #define ExitMessage(message) printf("%s\n",message);exit(1);
+typedef enum BOOLEAN {TRUE,FALSE} BOOL;
 
 #endif
