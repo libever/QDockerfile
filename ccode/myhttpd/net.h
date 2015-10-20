@@ -6,6 +6,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+typedef enum RequestType {POST,GET} RequestType ;
+
 typedef struct NetServer {
 	int serverSocket;
 	struct sockaddr_in bindAddress;
@@ -14,6 +16,7 @@ typedef struct NetServer {
 typedef struct NetClient {
 	int clientSocket;
 	struct sockaddr_in clientAddress;
+	RequestType rt;
 } NClient ;
 
 typedef void (*loopHanlder)(NServer*);
@@ -26,6 +29,7 @@ int readLine(NClient *myServer,char* buf,int size);
 int readSize(NClient *myServer,char* buf,int size);
 int writeData(NClient *myServer,char* buf,int size);
 NClient * readMyClient(NServer *myServer,int seconds);
+void initClientMethodAndUrl(NClient *,char*);
 void freeClient(NClient *client);
 
 #endif
