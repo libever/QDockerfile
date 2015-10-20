@@ -6,12 +6,12 @@
 #include <sys/wait.h>
 
 #define HANDLED 1
-#define FAILED 2 
+#define CONTINUE 2 
 
 void loopMainHandler(NServer *);
 int handlerGetRequest(NClient *);
 int handlerPostRequest(NClient *);
 int cgiRequest(NClient *);
 void infoClient(NClient *,char*);
-void loopRequest(NClient *);
+void* loopRequest(void *);
 #endif

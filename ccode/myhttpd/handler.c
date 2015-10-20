@@ -1,5 +1,6 @@
 #include "handler.h"
 #include "common.h"
+#include <pthread.h>
 
 void loopMainHandler(NServer *myServer) {
 	NClient *client;
@@ -7,18 +8,19 @@ void loopMainHandler(NServer *myServer) {
 
 	while(1){
 		client = readMyClient(myServer,90);		
-		loopRequest(client);
-	 /* if (pthread_create(&newthread , NULL, (void *(*)(void *))loopRequest, & client) != 0) { */
-			/*ExitMessage("thread create failed ... ");*/
-		/*}*/
+		/*loopRequest(client);*/
+	 if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
+			ExitMessage("thread create failed ... ");
+		}
 	}
 
 }
 
-void loopRequest(NClient *client){
+void * loopRequest(void *arg){
+	NClient *client = (NClient *) arg;
 	char buf[256] = {'\0'};
 	int bufsize = sizeof(buf);
-	int handlerIndex = 0 , dealed = 0;
+	int handlerIndex = 0 ;
 	int (*handlerList[])(NClient *)  = {handlerGetRequest,handlerPostRequest,NULL};
 	int (*handler)(NClient *) = handlerList[0];
 
@@ -35,6 +37,7 @@ void loopRequest(NClient *client){
 	}
 
 	freeClient(client);
+	return NULL;
 }
 
 int handlerGetRequest(NClient* client) {
@@ -44,15 +47,16 @@ int handlerGetRequest(NClient* client) {
 
 int handlerPostRequest(NClient* client) {
 	printf("2s\n");
+	return CONTINUE;
 }
 
 int cgiRequest(NClient* client) {
 	printf("2s\n");
+	return CONTINUE;
 }
 
 void infoClient(NClient *client,char* message) {
 	char text[2048] = {'\0'};
-	int messageLength = strlen(message);
 	sprintf(text,"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n%s",message);
 	writeData(client,text,strlen(text));
 }
