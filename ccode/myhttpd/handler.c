@@ -31,6 +31,8 @@ void loopMainHandler(NServer *myServer) {
 	for( process_count = 0 ; process_count < process_born ; process_count++ ) {
 		waitpid(pids[process_count],NULL,0);	
 	}
+    //主进程自行退出
+    if(currentPid == 0 ) exit(0);
 }
 
 void * loopRequest(void *arg){
