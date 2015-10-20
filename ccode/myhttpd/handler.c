@@ -2,38 +2,59 @@
 #include "common.h"
 #include <pthread.h>
 
+
+static pid_t currentPid;
+
 void loopMainHandler(NServer *myServer) {
 	NClient *client;
 	pthread_t newthread;
-
-	while(1){
-		client = readMyClient(myServer,90);		
-		/*loopRequest(client);*/
-	 if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
-			ExitMessage("thread create failed ... ");
+	int process_count = 0;
+	int process_born = 4;
+	pid_t fpid;
+	pid_t pids[process_born];
+	for ( ; process_count < process_born ; process_count++) {
+		fpid = fork();
+		if (fpid < 0 ) {
+			ExitMessage("fork failed");
+		} else if (fpid > 0) {
+			pids[process_count] = fpid;
+		} else {
+			currentPid = getpid();
+			while(1){
+				client = readMyClient(myServer,90);		
+				if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
+					ExitMessage("thread create failed ... ");
+				}
+			}
 		}
 	}
-
+	for( process_count = 0 ; process_count < process_born ; process_count++ ) {
+		waitpid(pids[process_count],NULL,-1);	
+	}
 }
 
 void * loopRequest(void *arg){
 	NClient *client = (NClient *) arg;
 	char buf[256] = {'\0'};
 	int bufsize = sizeof(buf);
-	int handlerIndex = 0 ;
+	int handlerIndex = 0 , requestRes = 0;
 	int (*handlerList[])(NClient *)  = {handlerGetRequest,handlerPostRequest,NULL};
 	int (*handler)(NClient *) = handlerList[0];
 
 	bzero(buf,bufsize);
 	if( ( bufsize - 1 ) ==  readLine(client,buf,bufsize)){
-		infoClient(client,"URL IS TOO LONG ... \n");			
+		infoClient(client,"URL IS TOO LONG ... \n",CONTENT_TYPE_HTML);			
 	} else {
 		do{
 			if ( HANDLED == handler(client) ){
+				requestRes = HANDLED;
 				break;	
 			}
 			handler = handlerList[++handlerIndex];
 		} while (handler !=  NULL);
+		if (HANDLED != requestRes) {
+			infoClient(client,"NO CODE TO DEAL WITH THIS REQUEST",CONTENT_TYPE_HTML);	
+		}
 	}
 
 	freeClient(client);
@@ -41,22 +62,29 @@ void * loopRequest(void *arg){
 }
 
 int handlerGetRequest(NClient* client) {
-	infoClient(client,"Hello world");
+	char message[128] = {'\0'};
+	sprintf(message,"Hello world FROM %d \n ",currentPid);
+	infoClient(client,message,CONTENT_TYPE_HTML);
 	return HANDLED;
 }
 
 int handlerPostRequest(NClient* client) {
-	printf("2s\n");
 	return CONTINUE;
 }
 
 int cgiRequest(NClient* client) {
-	printf("2s\n");
 	return CONTINUE;
 }
 
-void infoClient(NClient *client,char* message) {
+void infoClient(NClient *client,char* message,char* contentType) {
 	char text[2048] = {'\0'};
-	sprintf(text,"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n%s",message);
+	int messageLength = strlen(message);
+	char *messageTpl = "HTTP/1.1 200 OK\r\n\
+Server: myhttp\r\n\
+Content-Type: %s\r\n\
+Content-Length: %d \r\n\
+\r\n\
+%s";
+	sprintf(text,messageTpl,contentType,messageLength,message);
 	writeData(client,text,strlen(text));
 }
