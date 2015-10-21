@@ -12,6 +12,7 @@ typedef enum RequestType {POST,GET} RequestType ;
 typedef struct NetServer {
 	int serverSocket;
 	struct sockaddr_in bindAddress;
+	int process_born;
 } NServer;
 
 typedef struct NetClient {
@@ -25,7 +26,7 @@ typedef void (*loopHanlder)(NServer*);
 void openServer(NServer *myServer);
 void closeServer(NServer *myServer);
 void loopServer(NServer *myServer ,loopHanlder handler);
-NServer* initNServer(int port);
+NServer* initNServer(int port,int process_born);
 int readLine(NClient *myServer,char* buf,int size);
 int readSize(NClient *myServer,char* buf,int size);
 int writeData(NClient *myServer,char* buf,int size);

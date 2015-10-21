@@ -9,8 +9,8 @@ void StopServer(){
 
 int main(){
 	int port = 1028;
-
-	myServer = initNServer(port);
+	int process_born = 4;
+	myServer = initNServer(port,process_born);
 	signal(SIGINT, StopServer); 
 	printf("INIT server at %d \n",port);
 	openServer(myServer);

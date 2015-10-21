@@ -21,7 +21,7 @@ void loopServer(NServer *myServer ,loopHanlder handler) {
 	handler(myServer);
 }
 
-NServer* initNServer(int port) {
+NServer* initNServer(int port, int process_born) {
 	NServer *newServer = (NServer*)malloc(sizeof(NServer));
 	struct sockaddr_in name;
 	int on = 1, ret;
@@ -39,6 +39,7 @@ NServer* initNServer(int port) {
 	name.sin_addr.s_addr = htonl(INADDR_ANY);
 
 	newServer->bindAddress = name;
+	newServer->process_born= process_born;
 
 	return newServer;
 }

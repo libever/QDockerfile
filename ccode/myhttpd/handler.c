@@ -10,7 +10,7 @@ void loopMainHandler(NServer *myServer) {
 	NClient *client;
 	pthread_t newthread;
 	int process_count = 0;
-	int process_born = 1;
+	int process_born = myServer->process_born;
 	pid_t fpid;
 	pid_t pids[process_born];
 	for ( ; process_count < process_born ; process_count++) {
@@ -32,8 +32,8 @@ void loopMainHandler(NServer *myServer) {
 	for( process_count = 0 ; process_count < process_born ; process_count++ ) {
 		waitpid(pids[process_count],NULL,0);	
 	}
-    //主进程自行退出
-    if(currentPid == 0 ) exit(0);
+	//主进程自行退出
+	if(currentPid == 0 ) exit(0);
 }
 
 void * loopRequest(void *arg){
