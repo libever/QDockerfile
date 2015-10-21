@@ -1,6 +1,7 @@
 #include "handler.h"
 #include "common.h"
 #include <pthread.h>
+#include <time.h>
 
 
 static pid_t currentPid;
@@ -9,7 +10,7 @@ void loopMainHandler(NServer *myServer) {
 	NClient *client;
 	pthread_t newthread;
 	int process_count = 0;
-	int process_born = 4;
+	int process_born = 1;
 	pid_t fpid;
 	pid_t pids[process_born];
 	for ( ; process_count < process_born ; process_count++) {
@@ -92,6 +93,7 @@ void infoClient(NClient *client,char* message,char* contentType) {
 	int messageLength = strlen(message);
 	char *messageTpl = "HTTP/1.1 200 OK\r\n\
 Server: myhttp\r\n\
+Connection: closed \r\n\
 Content-Type: %s\r\n\
 Content-Length: %d \r\n\
 \r\n\
