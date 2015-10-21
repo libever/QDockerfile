@@ -41,7 +41,7 @@ void * loopRequest(void *arg){
 	char buf[256] = {'\0'};
 	int bufsize = sizeof(buf);
 	int handlerIndex = 0 , requestRes = 0;
-	int (*handlerList[])(NClient *)  = {handlerGetRequest,handlerPostRequest,NULL};
+	int (*handlerList[])(NClient *)  = {handleBySendFileContent,handlerGetRequest,handlerPostRequest,NULL};
 	int (*handler)(NClient *) = handlerList[0];
 
 	bzero(buf,bufsize);
@@ -69,13 +69,16 @@ void * loopRequest(void *arg){
 }
 
 int handleBySendFileContent(NClient *client){
-
+	char file_path[128] = {'\0'};
+	char message[256];
+	sprintf(message,"FIND FILE >>>> Hello world FROM %d \n URL IS %s\n ",currentPid,client->requestUrl);
+	infoClient(client,message,CONTENT_TYPE_HTML);
 	return HANDLED;
 }
 
 int handlerGetRequest(NClient* client) {
 	char message[128] = {'\0'};
-	sprintf(message,"Hello world FROM %d \n ",currentPid);
+	sprintf(message,"Hello world FROM %d \n URL IS %s\n ",currentPid,client->requestUrl);
 	infoClient(client,message,CONTENT_TYPE_HTML);
 	return HANDLED;
 }

@@ -21,7 +21,7 @@ void loopServer(NServer *myServer ,loopHanlder handler) {
 	handler(myServer);
 }
 
-NServer* initNServer(int port, int process_born) {
+NServer* initNServer(int port, int process_born,char* document_root) {
 	NServer *newServer = (NServer*)malloc(sizeof(NServer));
 	struct sockaddr_in name;
 	int on = 1, ret;
@@ -40,6 +40,7 @@ NServer* initNServer(int port, int process_born) {
 
 	newServer->bindAddress = name;
 	newServer->process_born= process_born;
+	memcpy(newServer->document_root,document_root,strlen(document_root));
 
 	return newServer;
 }
@@ -98,14 +99,46 @@ NClient * readMyClient(NServer *myServer,int seconds){
 	}
 	timeoutres = setsockopt(newClient->clientSocket,SOL_SOCKET,SO_SNDTIMEO,(const char*)&timeout,sizeof(timeout));
 	timeoutres = setsockopt(newClient->clientSocket,SOL_SOCKET,SO_RCVTIMEO,(const char*)&timeout,sizeof(timeout));
+	newClient->rt = NONE ;
+	bzero(newClient->requestUrl,256);
+	newClient->server = myServer;
 
 	return newClient;
 }
 
 BOOL initClientMethodAndUrl(NClient *client,char* firstLine) {
 	char methods[4] = {'\0'};
-	
-	return FALSE;
+	char *pos = firstLine;
+	int insertPos = 0;
+	while(*pos != ' ') {
+		methods[insertPos++] = *pos;
+		pos++;
+	}
+
+	if(methods[0] == 'g' || methods[0] == 'G') {
+		client->rt = GET;	
+	}
+
+	if(methods[0] == 'p' || methods[0] == 'P') {
+		client->rt = POST;	
+	}
+
+	if(client->rt == NONE){
+		return FALSE;	
+	}
+
+	pos++;
+	insertPos = 0;
+	while(*pos != ' ') {
+		client->requestUrl[insertPos++] = *pos;
+		pos++;
+	}
+
+	if(strlen(client->requestUrl) == 0) {
+		return FALSE;	
+	}
+
+	return TRUE;
 }
 
 void freeClient(NClient *client){
