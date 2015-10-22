@@ -3,7 +3,6 @@
 #include <pthread.h>
 #include <time.h>
 
-
 static pid_t currentPid;
 
 void loopMainHandler(NServer *myServer) {
@@ -42,6 +41,7 @@ void * loopRequest(void *arg){
 	int bufsize = sizeof(buf);
 	int handlerIndex = 0 , requestRes = 0;
 	int (*handlerList[])(NClient *)  = {
+		handleFilePermission,
 		handleBySendFileContent,
 		handlerGetRequest,
 		handlerPostRequest,
@@ -76,36 +76,42 @@ void * loopRequest(void *arg){
 	return NULL;
 }
 
-int handleBySendFileContent(NClient *client){
-	char file_path[128] = {'\0'};
-	char message[256];
-	char **contentList = (char**)malloc(sizeof(char*) * 64);
-	char **listPos = contentList;
-
-	*listPos = (char*) malloc(sizeof(char) * 128);
-	sprintf(*listPos,"%s%s",client->server->document_root,client->requestUrl);
-
-	listPos++;
-	*listPos = (char*) malloc(sizeof(char) * 128);
-	sprintf(*listPos,"%s%s",client->server->document_root,client->requestUrl);
-
-	listPos++;
-	*listPos = (char*) malloc(sizeof(char) * 128);
-	sprintf(*listPos,"%s%s",client->server->document_root,client->requestUrl);
-
-	listPos++;
-	*listPos = NULL;
-
-	sprintf(message,"FIND FILE >>>> Hello world FROM %d \n URL IS %s\n ",currentPid,client->requestUrl);
-	/*infoClientList(client,contentList,CONTENT_TYPE_HTML);*/
-	/*return HANDLED;*/
+int handleFilePermission(NClient *client){
+	//判断是否有权限访问该URL
 	return CONTINUE;
 }
 
+int handleBySendFileContent(NClient *client){
+	char file_path[128] = {'\0'};
+	char **contentList = (char**)malloc(sizeof(char*) * 64);
+	char **listPos = contentList;
+	FILE *fp;
+
+	sprintf(file_path,"%s%s",client->server->document_root,client->requestUrl);
+	fp = fopen(file_path,"r");
+
+	if(fp <= 0) {
+		fclose(fp);
+		return CONTINUE;	
+	}
+
+	while(!feof(fp)) {
+		*listPos = (char*) malloc(sizeof(char) * 128);
+		bzero(*listPos,128);
+		fread(*listPos,127,1,fp);
+		listPos++;
+	}
+	fclose(fp);
+	*listPos = NULL;
+
+	infoClientList(client,contentList,CONTENT_TYPE_HTML);
+	return HANDLED;
+}
+
 int handlerGetRequest(NClient* client) {
-	char message[128] = {'\0'};
-	sprintf(message,"Hello world FROM %d \n URL IS %s\n ",currentPid,client->requestUrl);
-	/*infoClient(client,message,CONTENT_TYPE_HTML);*/
+	//char message[128] = {'\0'};
+	//sprintf(message,"hello world from %d \n url is %s\n ",currentpid,client->requesturl);
+	//*infoClient(client,message,CONTENT_TYPE_HTML);*/
 	return CONTINUE;
 }
 
@@ -165,7 +171,7 @@ Content-Length: %d \r\n\
 }
 
 int notFindRequest(NClient *client) {
-		char *notFindMessage = "<h1>Sorry I can't find your file . </h1>";
+		char *notFindMessage = "<h1>Sorry I can't find your file . </h1>\n";
 		char text[2048] = {'\0'};
 		char *messageTpl = "HTTP/1.1 404 Not Found\r\n\
 Server: myhttp\r\n\
