@@ -41,7 +41,12 @@ void * loopRequest(void *arg){
 	char buf[256] = {'\0'};
 	int bufsize = sizeof(buf);
 	int handlerIndex = 0 , requestRes = 0;
-	int (*handlerList[])(NClient *)  = {handleBySendFileContent,handlerGetRequest,handlerPostRequest,NULL};
+	int (*handlerList[])(NClient *)  = {
+		handleBySendFileContent,
+		handlerGetRequest,
+		handlerPostRequest,
+		notFindRequest,
+	NULL};
 	int (*handler)(NClient *) = handlerList[0];
 
 	bzero(buf,bufsize);
@@ -52,15 +57,17 @@ void * loopRequest(void *arg){
 			infoClient(client,"URL IS TOO SHORT",CONTENT_TYPE_HTML);
 		} else {
 			do{
-				if ( HANDLED == handler(client) ){
-					requestRes = HANDLED;
-					break;	
+				requestRes = handler(client);
+				switch(requestRes) {
+					case HANDLED:
+						break;
+					case CONTINUE:
+						handler = handlerList[++handlerIndex];
+						break;
+					default :
+						ExitMessage("NO RULES FOR HANDLER REQUEST");
 				}
-				handler = handlerList[++handlerIndex];
 			} while (handler !=  NULL);
-			if (HANDLED != requestRes) {
-				infoClient(client,"NO CODE TO DEAL WITH THIS REQUEST",CONTENT_TYPE_HTML);	
-			}
 		}
 	}
 
@@ -71,16 +78,34 @@ void * loopRequest(void *arg){
 int handleBySendFileContent(NClient *client){
 	char file_path[128] = {'\0'};
 	char message[256];
+	char **contentList = (char**)malloc(sizeof(char*) * 64);
+	char **listPos = contentList;
+
+	*listPos = (char*) malloc(sizeof(char) * 128);
+	sprintf(*listPos,"%s%s",client->server->document_root,client->requestUrl);
+
+	listPos++;
+	*listPos = (char*) malloc(sizeof(char) * 128);
+	sprintf(*listPos,"%s%s",client->server->document_root,client->requestUrl);
+
+	listPos++;
+	*listPos = (char*) malloc(sizeof(char) * 128);
+	sprintf(*listPos,"%s%s",client->server->document_root,client->requestUrl);
+
+	listPos++;
+	*listPos = NULL;
+
 	sprintf(message,"FIND FILE >>>> Hello world FROM %d \n URL IS %s\n ",currentPid,client->requestUrl);
-	infoClient(client,message,CONTENT_TYPE_HTML);
-	return HANDLED;
+	/*infoClientList(client,contentList,CONTENT_TYPE_HTML);*/
+	/*return HANDLED;*/
+	return CONTINUE;
 }
 
 int handlerGetRequest(NClient* client) {
 	char message[128] = {'\0'};
 	sprintf(message,"Hello world FROM %d \n URL IS %s\n ",currentPid,client->requestUrl);
-	infoClient(client,message,CONTENT_TYPE_HTML);
-	return HANDLED;
+	/*infoClient(client,message,CONTENT_TYPE_HTML);*/
+	return CONTINUE;
 }
 
 int handlerPostRequest(NClient* client) {
@@ -91,9 +116,42 @@ int cgiRequest(NClient* client) {
 	return CONTINUE;
 }
 
+void infoClientList(NClient *client,char** messageList,char* contentType) {
+	char **scanPos = messageList;
+	char text[2048] = {'\0'};
+	int messageLength = 0;
+	char *messageTpl = "HTTP/1.1 200 OK\r\n\
+Server: myhttp\r\n\
+Connection: closed \r\n\
+Content-Type: %s\r\n\
+Content-Length: %d \r\n\
+\r\n";
+
+	do {
+		messageLength += strlen(*scanPos);	
+		scanPos++;
+	} while(*scanPos != NULL);
+
+	scanPos = messageList;
+	sprintf(text,messageTpl,contentType,messageLength);
+	writeData(client,text,strlen(text));
+	do {
+		writeData(client,*scanPos,strlen(*scanPos));
+		scanPos++;
+	} while(*scanPos != NULL);
+
+	//清理之前malloc的内容资源	
+	scanPos = messageList;
+	do {
+		free(*scanPos);
+		scanPos++;
+	} while(*scanPos != NULL);
+	free(messageList);
+}
+
 void infoClient(NClient *client,char* message,char* contentType) {
 	char text[2048] = {'\0'};
-	int messageLength = strlen(message);
+	int messageLength = strlen(message) ;
 	char *messageTpl = "HTTP/1.1 200 OK\r\n\
 Server: myhttp\r\n\
 Connection: closed \r\n\
@@ -103,4 +161,9 @@ Content-Length: %d \r\n\
 %s";
 	sprintf(text,messageTpl,contentType,messageLength,message);
 	writeData(client,text,strlen(text));
+}
+
+int notFindRequest(NClient *client) {
+	infoClient(client,"<<<<<<<<<  NO CODE TO DEAL WITH THIS REQUEST   >>>>>>>>>>>>>",CONTENT_TYPE_HTML);	
+	return HANDLED;
 }

@@ -40,7 +40,8 @@ NServer* initNServer(int port, int process_born,char* document_root) {
 
 	newServer->bindAddress = name;
 	newServer->process_born= process_born;
-	memcpy(newServer->document_root,document_root,strlen(document_root));
+	printf("DOCUMENT ROOT : %s\n",document_root);
+	strcpy(newServer->document_root,document_root);
 
 	return newServer;
 }
