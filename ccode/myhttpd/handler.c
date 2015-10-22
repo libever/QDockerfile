@@ -46,7 +46,7 @@ void * loopRequest(void *arg){
 		handlerGetRequest,
 		handlerPostRequest,
 		notFindRequest,
-	NULL};
+		NULL};
 	int (*handler)(NClient *) = handlerList[0];
 
 	bzero(buf,bufsize);
@@ -60,6 +60,7 @@ void * loopRequest(void *arg){
 				requestRes = handler(client);
 				switch(requestRes) {
 					case HANDLED:
+						handler = NULL;
 						break;
 					case CONTINUE:
 						handler = handlerList[++handlerIndex];
@@ -67,7 +68,7 @@ void * loopRequest(void *arg){
 					default :
 						ExitMessage("NO RULES FOR HANDLER REQUEST");
 				}
-			} while (handler !=  NULL);
+			} while (handler !=  NULL );
 		}
 	}
 
@@ -164,6 +165,16 @@ Content-Length: %d \r\n\
 }
 
 int notFindRequest(NClient *client) {
-	infoClient(client,"<<<<<<<<<  NO CODE TO DEAL WITH THIS REQUEST   >>>>>>>>>>>>>",CONTENT_TYPE_HTML);	
+		char *notFindMessage = "<h1>Sorry I can't find your file . </h1>";
+		char text[2048] = {'\0'};
+		char *messageTpl = "HTTP/1.1 404 Not Found\r\n\
+Server: myhttp\r\n\
+Content-Type: %s \r\n\
+Content-Length: %d \r\n\
+Connection: closed \r\n\
+\r\n\
+%s";
+		sprintf(text,messageTpl,CONTENT_TYPE_HTML,strlen(notFindMessage),notFindMessage);
+		writeData(client,text,strlen(text));
 	return HANDLED;
 }
