@@ -22,6 +22,7 @@ typedef struct NetClient {
 	RequestType rt ;
 	char requestUrl[256]; 
 	NServer *server;
+	char filetype[5];
 } NClient ;
 
 typedef void (*loopHanlder)(NServer*);

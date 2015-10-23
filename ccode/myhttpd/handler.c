@@ -78,35 +78,39 @@ void * loopRequest(void *arg){
 }
 
 int handleFilePermission(NClient *client){
-	return CONTINUE;
 	char *url = client->requestUrl;
 	char *url_end_pos = url + strlen(url), *file_ext_pos  = url_end_pos;
 	char file_name[64] = {'\0'};
 	int file_name_len = 0;
-	char **allowExt = {"txt","html","css","js","cgi","qexe"};
+	char *allowExt[] = {"txt","html","css","js","cgi","qexe"};
 	char **allowPos = allowExt;
 	BOOL urlAllow = FALSE;
+
 	while(*url_end_pos != '/') {
 		url_end_pos--;	
 		if(*url_end_pos == '.'){
 			file_ext_pos = url_end_pos + 1;	
 		}
 	}
-	printf(">>>>>>>>>>\n");
 
-//	while(*allowPos!= NULL){
-//		printf("%s\n",*allowPos);
-//		//if(strcasecmp(*allowExt,file_ext_pos) == 0 ) {
-//		//	urlAllow = TRUE;
-//		//	break;
-//		//}
-//		allowPos++;
-//	}
-//
-	//if(urlAllow == FALSE) {
-	//	serverInternalError(client,"<p>You can't request this type of file ! </p>\n");
-	//	return HANDLED;
-	//}
+	strcpy(client->filetype,file_ext_pos);
+
+	if(*file_ext_pos == NULL) {
+		return CONTINUE;	
+	}
+
+	while(*allowPos!= NULL){
+		if(strcasecmp(*allowPos,file_ext_pos) == 0 ) {
+			urlAllow = TRUE;
+			break;
+		}
+		allowPos++;
+	}
+
+	if(urlAllow == FALSE) {
+		serverInternalError(client,"<p>You can't request this type of file ! </p>\n");
+		return HANDLED;
+	}
 
 	url_end_pos++;
 	strcpy(file_name,url_end_pos);
