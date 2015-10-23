@@ -12,11 +12,11 @@
 
 void loopMainHandler(NServer *);
 int handleBySendFileContent(NClient *);
-int handlerGetRequest(NClient *);
 int handlerPostRequest(NClient *);
 int cgiRequest(NClient *);
 int notFindRequest(NClient *);
 int handleFilePermission(NClient *);
+int handlePathPermission(NClient *);
 
 void infoClient(NClient *,char*,char*);
 void infoClientList(NClient *,char**,char*);

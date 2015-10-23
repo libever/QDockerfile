@@ -42,9 +42,9 @@ void * loopRequest(void *arg){
 	int bufsize = sizeof(buf);
 	int handlerIndex = 0 , requestRes = 0;
 	int (*handlerList[])(NClient *)  = {
+		handlePathPermission,
 		handleFilePermission,
 		handleBySendFileContent,
-		handlerGetRequest,
 		handlerPostRequest,
 		notFindRequest,
 		NULL};
@@ -77,6 +77,16 @@ void * loopRequest(void *arg){
 	return NULL;
 }
 
+// 假如其中包含.. ， 认为URL 非法
+int handlePathPermission(NClient *client){
+
+	if(strstr(client->requestUrl,"..") != NULL) {
+		serverInternalError(client,"<p>YOUR URL CONTAINS SPECIAL CHARACTERS</p>");	
+		return HANDLED;
+	}
+	return CONTINUE;
+}
+
 int handleFilePermission(NClient *client){
 	char *url = client->requestUrl;
 	char *url_end_pos = url + strlen(url), *file_ext_pos  = url_end_pos;
@@ -95,7 +105,7 @@ int handleFilePermission(NClient *client){
 
 	strcpy(client->filetype,file_ext_pos);
 
-	if(*file_ext_pos == NULL) {
+	if(*file_ext_pos == '\0') {
 		return CONTINUE;	
 	}
 
@@ -136,6 +146,7 @@ int handleBySendFileContent(NClient *client){
 		return CONTINUE;	
 	}
 
+	printf("FOPEN THIS FILE : %s\n",file_path);
 	fp = fopen(file_path,"r");
 
 	if(fp <= 0) {
@@ -154,13 +165,6 @@ int handleBySendFileContent(NClient *client){
 
 	infoClientList(client,contentList,CONTENT_TYPE_HTML);
 	return HANDLED;
-}
-
-int handlerGetRequest(NClient* client) {
-	//char message[128] = {'\0'};
-	//sprintf(message,"hello world from %d \n url is %s\n ",currentpid,client->requesturl);
-	//*infoClient(client,message,CONTENT_TYPE_HTML);*/
-	return CONTINUE;
 }
 
 int handlerPostRequest(NClient* client) {
