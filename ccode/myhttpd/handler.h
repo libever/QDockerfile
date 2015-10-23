@@ -20,5 +20,8 @@ int handleFilePermission(NClient *);
 
 void infoClient(NClient *,char*,char*);
 void infoClientList(NClient *,char**,char*);
+void serverInternalError(NClient *,char*);
 void* loopRequest(void *);
+char* fileExt(char*);
+BOOL isPathDir(char *path);
 #endif

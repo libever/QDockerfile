@@ -2,6 +2,7 @@
 #include "common.h"
 #include <pthread.h>
 #include <time.h>
+#include<sys/stat.h>
 
 static pid_t currentPid;
 
@@ -77,7 +78,43 @@ void * loopRequest(void *arg){
 }
 
 int handleFilePermission(NClient *client){
-	//判断是否有权限访问该URL
+	return CONTINUE;
+	char *url = client->requestUrl;
+	char *url_end_pos = url + strlen(url), *file_ext_pos  = url_end_pos;
+	char file_name[64] = {'\0'};
+	int file_name_len = 0;
+	char **allowExt = {"txt","html","css","js","cgi","qexe"};
+	char **allowPos = allowExt;
+	BOOL urlAllow = FALSE;
+	while(*url_end_pos != '/') {
+		url_end_pos--;	
+		if(*url_end_pos == '.'){
+			file_ext_pos = url_end_pos + 1;	
+		}
+	}
+	printf(">>>>>>>>>>\n");
+
+//	while(*allowPos!= NULL){
+//		printf("%s\n",*allowPos);
+//		//if(strcasecmp(*allowExt,file_ext_pos) == 0 ) {
+//		//	urlAllow = TRUE;
+//		//	break;
+//		//}
+//		allowPos++;
+//	}
+//
+	//if(urlAllow == FALSE) {
+	//	serverInternalError(client,"<p>You can't request this type of file ! </p>\n");
+	//	return HANDLED;
+	//}
+
+	url_end_pos++;
+	strcpy(file_name,url_end_pos);
+	file_name_len = strlen(file_name);
+	if(file_name_len > 0 && file_name[0] == '.') {
+		serverInternalError(client,"<p>You can't request this file ! </p>\n");
+		return HANDLED;
+	}
 	return CONTINUE;
 }
 
@@ -88,6 +125,13 @@ int handleBySendFileContent(NClient *client){
 	FILE *fp;
 
 	sprintf(file_path,"%s%s",client->server->document_root,client->requestUrl);
+
+	//不处理目录内容
+	if(TRUE == isPathDir(file_path)) {
+		free(contentList);
+		return CONTINUE;	
+	}
+
 	fp = fopen(file_path,"r");
 
 	if(fp <= 0) {
@@ -183,4 +227,29 @@ Connection: closed \r\n\
 		sprintf(text,messageTpl,CONTENT_TYPE_HTML,strlen(notFindMessage),notFindMessage);
 		writeData(client,text,strlen(text));
 	return HANDLED;
+}
+
+void serverInternalError(NClient *client,char* errorMessage) {
+		char *noPermissonMessage = "<h1>Sorry You have no permission ! </h1>\n";
+		char text[2048] = {'\0'};
+		char *messageTpl = "HTTP/1.1 500 SERVER ERROR\r\n\
+Server: myhttp\r\n\
+Content-Type: %s \r\n\
+Content-Length: %d \r\n\
+Connection: closed \r\n\
+\r\n\
+%s%s";
+		sprintf(text,messageTpl,CONTENT_TYPE_HTML,strlen(errorMessage) + strlen(noPermissonMessage) ,noPermissonMessage,errorMessage);
+		writeData(client,text,strlen(text));
+}
+
+BOOL isPathDir(char *path) {
+	struct stat info;
+	stat(path,&info);
+	if(S_ISDIR(info.st_mode)){
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+
 }

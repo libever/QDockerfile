@@ -40,7 +40,6 @@ NServer* initNServer(int port, int process_born,char* document_root) {
 
 	newServer->bindAddress = name;
 	newServer->process_born= process_born;
-	printf("DOCUMENT ROOT : %s\n",document_root);
 	strcpy(newServer->document_root,document_root);
 
 	return newServer;
@@ -148,3 +147,4 @@ void freeClient(NClient *client){
 		free(client);
 	}
 }
+
