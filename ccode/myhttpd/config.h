@@ -8,5 +8,7 @@ typedef struct {
 extern ConfigT *Config;
 
 void initConfig(char *);
+static void configLine(char*);
+static void configReadLine(FILE **,char*,int);
 
 #endif
