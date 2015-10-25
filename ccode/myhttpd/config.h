@@ -7,6 +7,7 @@
 typedef struct {
 	int ProcessBorn;
 	BOOL DEBUG;
+	int PORT ;
 } ConfigT;
 
 typedef struct {
@@ -21,6 +22,7 @@ static void configLine(char*);
 static void configReadLine(FILE **,char*,int);
 
 void configProcessBorn(char *);
+void configPort(char *);
 void configDEBUG(char *); 
 
 

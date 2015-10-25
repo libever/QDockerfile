@@ -10,14 +10,13 @@ void initConfig(char *fileName) {
 		ExitMessage("Config File Not Found ... \n");	
 	}
 
+	printf("init myhttpd config from file : %s \n",fileName);
 	while(!feof(fp)) {
 		configReadLine(&fp,line,max_line_len);	
 		configLine(line);
 	}
 
 	fclose(fp);
-
-	printf("%d\n",Config.ProcessBorn);
 
 }
 
@@ -30,6 +29,8 @@ static void configLine(char *line){
 			return;	
 	}
 
+	printf("%s\n",line);
+
 	while(*configValue != ' ') {
 		configValue++;	
 	}
@@ -37,16 +38,17 @@ static void configLine(char *line){
 	*configValue = '\0';
 	configValue++;
 	
-	printf("%s|=>|%s \n",configName,configValue);
 	ConfigEntry entryList[] = {
-		{"ProcessBorn",configProcessBorn},
+		{"PROCESS_BORN",configProcessBorn},
+		{"DEBUG",configDEBUG},
+		{"PORT",configPort},
 		{NULL,NULL}
 	};
 
 	ConfigEntry *scanPos = entryList;
 
 	while(scanPos->configName != NULL) {
-		if(strstr(configName,scanPos->configName) != NULL) {
+		if(strcmp(configName,scanPos->configName) == 0) {
 			return scanPos->configFun(configValue);	
 		}
 		scanPos++;
@@ -98,12 +100,13 @@ static void configReadLine(FILE **fpp,char *buf, int size) {
 }
 
 void configProcessBorn(char *value) { 
-	printf("................\n");
 	Config.ProcessBorn = atoi(value);
-	printf("%d\n",Config.ProcessBorn);
 }
 
 void configDEBUG(char *value) { 
 	Config.DEBUG = strcasecmp(value,"TRUE") ? TRUE : FALSE;
 }
 
+void configPort(char *value) { 
+	Config.PORT= atoi(value);
+}

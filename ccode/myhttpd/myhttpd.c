@@ -9,8 +9,7 @@ void StopServer(){
 }
 
 int main(int argc, char** argv){
-	int port = 1028;
-	int process_born = 5;
+
 	char document_root[128] = "/Users/xingyue/outcode/git/lovely-codes/QDockerfile/ccode/myhttpd/html";
 	char *configFile = "./etc/myhttpd.conf";
 
@@ -18,10 +17,11 @@ int main(int argc, char** argv){
 		configFile = argv[1];	
 	}
 
+	printf("\n");
 	initConfig(configFile);
-	myServer = initNServer(port,process_born,document_root);
+	myServer = initNServer(Config.PORT,Config.ProcessBorn,document_root);
 	signal(SIGINT, StopServer); 
-	LOG("INIT server AT %d \n",port);
+	LOG("INIT server AT %d \n\n",Config.PORT);
 	openServer(myServer);
 	loopServer(myServer,loopMainHandler);
 	StopServer();
