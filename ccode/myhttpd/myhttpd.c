@@ -10,7 +10,6 @@ void StopServer(){
 
 int main(int argc, char** argv){
 
-	char document_root[128] = "/Users/xingyue/outcode/git/lovely-codes/QDockerfile/ccode/myhttpd/html";
 	char *configFile = "./etc/myhttpd.conf";
 
 	if(argc == 2) {
@@ -19,7 +18,7 @@ int main(int argc, char** argv){
 
 	printf("\n");
 	initConfig(configFile);
-	myServer = initNServer(Config.PORT,Config.ProcessBorn,document_root);
+	myServer = initNServer(Config.PORT,Config.ProcessBorn,Config.DocumentRoot);
 	signal(SIGINT, StopServer); 
 	LOG("INIT server AT %d \n\n",Config.PORT);
 	openServer(myServer);

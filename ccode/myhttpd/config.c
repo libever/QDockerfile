@@ -42,6 +42,7 @@ static void configLine(char *line){
 		{"PROCESS_BORN",configProcessBorn},
 		{"DEBUG",configDEBUG},
 		{"PORT",configPort},
+		{"DOCUMENT_ROOT",configDocumentRoot},
 		{NULL,NULL}
 	};
 
@@ -109,4 +110,8 @@ void configDEBUG(char *value) {
 
 void configPort(char *value) { 
 	Config.PORT= atoi(value);
+}
+
+void configDocumentRoot(char *value){
+	strcpy(Config.DocumentRoot,value);
 }

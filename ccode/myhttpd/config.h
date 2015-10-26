@@ -8,6 +8,7 @@ typedef struct {
 	int ProcessBorn;
 	BOOL DEBUG;
 	int PORT ;
+	char DocumentRoot[128];
 } ConfigT;
 
 typedef struct {
@@ -24,6 +25,7 @@ static void configReadLine(FILE **,char*,int);
 void configProcessBorn(char *);
 void configPort(char *);
 void configDEBUG(char *); 
+void configDocumentRoot(char *); 
 
 
 #endif
