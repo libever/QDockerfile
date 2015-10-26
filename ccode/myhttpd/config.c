@@ -104,7 +104,7 @@ void configProcessBorn(char *value) {
 }
 
 void configDEBUG(char *value) { 
-	Config.DEBUG = strcasecmp(value,"TRUE") ? TRUE : FALSE;
+	Config.DEBUG = strcasecmp(value,"TRUE") == 0 ? TRUE : FALSE;
 }
 
 void configPort(char *value) { 
