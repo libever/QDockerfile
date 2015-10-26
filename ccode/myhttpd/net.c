@@ -129,9 +129,18 @@ BOOL initClientMethodAndUrl(NClient *client,char* firstLine) {
 
 	pos++;
 	insertPos = 0;
-	while(*pos != ' ') {
+
+	while(*pos != ' ' && *pos != '?') {
 		client->requestUrl[insertPos++] = *pos;
 		pos++;
+	}
+
+	if(*pos == '?') {
+		insertPos = 0;
+		while(*pos != ' ') {
+			client->queryString[insertPos++] = *pos;
+			pos++;
+		}
 	}
 
 	if(strlen(client->requestUrl) == 0) {
