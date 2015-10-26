@@ -20,7 +20,7 @@ void initConfig(char *fileName) {
 
 }
 
-static void configLine(char *line){
+void configLine(char *line){
 
 	char *configName = line;
 	char *configValue =  line;
@@ -57,13 +57,12 @@ static void configLine(char *line){
 
 }
 
-static void configReadLine(FILE **fpp,char *buf, int size) {
+void configReadLine(FILE **fpp,char *buf, int size) {
 	char tmp_line[size] ;
 	char *pos = tmp_line;
 	FILE *fp = *fpp;
 	char c = '\0';
 	int rlen = 0;
-	BOOL dbegin = FALSE;
 	bzero(buf,size);
 	bzero(tmp_line,size);
 	for ( ; rlen < size ; rlen++){
@@ -80,7 +79,7 @@ static void configReadLine(FILE **fpp,char *buf, int size) {
 		}
 	}
 
-	if(strlen(tmp_line) >= size) {
+	if(strlen(tmp_line) >= (size_t)size) {
 		ExitMessage("Your Config Line Is Too Long!\n");
 	}
 

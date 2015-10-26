@@ -19,8 +19,8 @@ typedef struct {
 ConfigT Config;
 
 void initConfig(char *);
-static void configLine(char*);
-static void configReadLine(FILE **,char*,int);
+void configLine(char*);
+void configReadLine(FILE **,char*,int);
 
 void configProcessBorn(char *);
 void configPort(char *);

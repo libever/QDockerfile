@@ -1,5 +1,6 @@
 #include "handler.h"
 #include "common.h"
+#include "config.h"
 #include <pthread.h>
 #include <time.h>
 #include<sys/stat.h>
@@ -45,7 +46,8 @@ void * loopRequest(void *arg){
 		handlePathPermission,
 		handleFilePermission,
 		handleBySendFileContent,
-		handlerPostRequest,
+		handlePostData,
+		cgiRequest,
 		notFindRequest,
 		NULL};
 	int (*handler)(NClient *) = handlerList[0];
@@ -55,7 +57,7 @@ void * loopRequest(void *arg){
 		infoClient(client,"URL IS TOO LONG ... \n",CONTENT_TYPE_HTML);			
 	} else {
 		if(FALSE == initClientMethodAndUrl(client,buf)){
-			infoClient(client,"URL IS TOO SHORT",CONTENT_TYPE_HTML);
+			serverInternalError(client,"URL IS TOO SHORT OR YOUR METHOD NOT FOUND ");
 		} else {
 			do{
 				requestRes = handler(client);
@@ -79,7 +81,6 @@ void * loopRequest(void *arg){
 
 // 假如其中包含.. ， 认为URL 非法
 int handlePathPermission(NClient *client){
-
 	if(strstr(client->requestUrl,"..") != NULL) {
 		serverInternalError(client,"<p>YOUR URL CONTAINS SPECIAL CHARACTERS</p>");	
 		return HANDLED;
@@ -92,7 +93,7 @@ int handleFilePermission(NClient *client){
 	char *url_end_pos = url + strlen(url), *file_ext_pos  = url_end_pos;
 	char file_name[64] = {'\0'};
 	int file_name_len = 0;
-	char *allowExt[] = {"txt","html","css","js","cgi","qexe"};
+	char *allowExt[] = {"txt","html","css","js","cgi"};
 	char **allowPos = allowExt;
 	BOOL urlAllow = FALSE;
 
@@ -115,6 +116,12 @@ int handleFilePermission(NClient *client){
 			break;
 		}
 		allowPos++;
+	}
+
+	if(strcasecmp("cgi",file_ext_pos) == 0 ) {
+		client->isCgi = TRUE;	
+	} else {
+		client->isCgi = FALSE;	
 	}
 
 	if(urlAllow == FALSE) {
@@ -146,7 +153,7 @@ int handleBySendFileContent(NClient *client){
 		return CONTINUE;	
 	}
 
-	printf("FOPEN THIS FILE : %s\n",file_path);
+	LOG("FOPEN THIS FILE : %s\n",file_path);
 	fp = fopen(file_path,"r");
 
 	if(fp <= 0) {
@@ -167,11 +174,15 @@ int handleBySendFileContent(NClient *client){
 	return HANDLED;
 }
 
-int handlerPostRequest(NClient* client) {
+int handlePostData(NClient* client) {
 	return CONTINUE;
 }
 
 int cgiRequest(NClient* client) {
+	if (client->isCgi == TRUE) {
+		infoClient(client,"OK I DEAL WITH MY REQUEST ...",CONTENT_TYPE_HTML);
+		return HANDLED;	
+	}
 	return CONTINUE;
 }
 
@@ -259,5 +270,4 @@ BOOL isPathDir(char *path) {
 	} else {
 		return FALSE;
 	}
-
 }

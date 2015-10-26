@@ -12,7 +12,6 @@ handler.o:handler.c handler.h
 config.o:config.c config.h common.h
 	gcc -g -W -Wall -c config.c
 
-
 clean:
 	rm myhttpd *.o
 	rm -rf myhttpd.dSYM

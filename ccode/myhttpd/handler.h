@@ -12,7 +12,7 @@
 
 void loopMainHandler(NServer *);
 int handleBySendFileContent(NClient *);
-int handlerPostRequest(NClient *);
+int handlePostData(NClient *);
 int cgiRequest(NClient *);
 int notFindRequest(NClient *);
 int handleFilePermission(NClient *);

@@ -23,6 +23,7 @@ typedef struct NetClient {
 	char requestUrl[256]; 
 	NServer *server;
 	char filetype[5];
+	BOOL isCgi;
 } NClient ;
 
 typedef void (*loopHanlder)(NServer*);
