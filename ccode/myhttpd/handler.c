@@ -200,13 +200,10 @@ int handlePostData(NClient* client) {
 			while(*lengthPos++ != ':') ;
 			contentLength = atoi(lengthPos); 
 		}
-        printf("%s %d \n",line,strcmp(line,"\r\n"));
 		if(0 == strcmp(line,"\r\n")){
-            printf("data read begin \n");
 			client->postData = (char*)malloc(sizeof(char) * ( contentLength + 1));
 			readSize(client,client->postData,contentLength);
 			client->postData[contentLength] = '\0';
-            printf("data read end \n");
 			break;	
 		}
 	} while(1);
