@@ -14,27 +14,38 @@ void loopMainHandler(NServer *myServer) {
 	int process_born = myServer->process_born;
 	pid_t fpid;
 	pid_t pids[process_born];
-	for ( ; process_count < process_born ; process_count++) {
-		fpid = fork();
-		if (fpid < 0 ) {
-			ExitMessage("fork failed");
-		} else if (fpid > 0) {
-			pids[process_count] = fpid;
-		} else {
-			currentPid = getpid();
-			while(1){
-				client = readMyClient(myServer,90);		
-				if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
-					ExitMessage("thread create failed ... ");
-				}
-			}
-		}
-	}
-	for( process_count = 0 ; process_count < process_born ; process_count++ ) {
-		waitpid(pids[process_count],NULL,0);	
-	}
-	//主进程自行退出
-	if(currentPid == 0 ) exit(0);
+
+    if(TRUE == Config.DEBUG) {
+        currentPid = getpid();
+        while(1){
+            client = readMyClient(myServer,90);		
+            if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
+                ExitMessage("thread create failed ... ");
+            }
+        }
+    } else {
+        for ( ; process_count < process_born ; process_count++) {
+            fpid = fork();
+            if (fpid < 0 ) {
+                ExitMessage("fork failed");
+            } else if (fpid > 0) {
+                pids[process_count] = fpid;
+            } else {
+                currentPid = getpid();
+                while(1){
+                    client = readMyClient(myServer,90);		
+                    if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
+                        ExitMessage("thread create failed ... ");
+                    }
+                }
+            }
+        }
+        for( process_count = 0 ; process_count < process_born ; process_count++ ) {
+            waitpid(pids[process_count],NULL,0);	
+        }
+        //主进程自行退出
+        if(currentPid == 0 ) exit(0);
+    }
 }
 
 void * loopRequest(void *arg){
@@ -184,17 +195,18 @@ int handlePostData(NClient* client) {
 	}
 	do {
 		readLine(client,line,256);
-
 		if(strncasecmp("Content-Length",line,14) == 0) {
 			lengthPos = line + 14;
 			while(*lengthPos++ != ':') ;
 			contentLength = atoi(lengthPos); 
 		}
-
+        printf("%s %d \n",line,strcmp(line,"\r\n"));
 		if(0 == strcmp(line,"\r\n")){
+            printf("data read begin \n");
 			client->postData = (char*)malloc(sizeof(char) * ( contentLength + 1));
 			readSize(client,client->postData,contentLength);
 			client->postData[contentLength] = '\0';
+            printf("data read end \n");
 			break;	
 		}
 	} while(1);
