@@ -74,7 +74,7 @@ int readLine(NClient *client,char* buf,int size) {
 			break;	
 		}
 	} 
-	buf[pos] = '\0';
+	buf[pos+1] = '\0';
 	return pos;
 }
 
@@ -154,8 +154,16 @@ BOOL initClientMethodAndUrl(NClient *client,char* firstLine) {
 	return TRUE;
 }
 
+BOOL initPostData(NClient *client){
+
+	return TRUE;
+}
+
 void freeClient(NClient *client){
 	close(client->clientSocket);
+	if(NULL != client->postData) {
+		free(client->postData);	
+	}
 	if(NULL != client) {
 		free(client);
 	}
