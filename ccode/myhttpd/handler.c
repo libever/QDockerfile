@@ -107,6 +107,7 @@ int handleFilePermission(NClient *client){
 	strcpy(client->filetype,file_ext_pos);
 
 	if(*file_ext_pos == '\0') {
+		client->isCgi = FALSE;
 		return CONTINUE;	
 	}
 
@@ -147,8 +148,8 @@ int handleBySendFileContent(NClient *client){
 
 	sprintf(file_path,"%s%s",client->server->document_root,client->requestUrl);
 
-	//不处理目录内容
-	if(TRUE == isPathDir(file_path)) {
+	//不处理目录内容和cgi请求
+	if(TRUE == isPathDir(file_path) || client->isCgi == TRUE) {
 		free(contentList);
 		return CONTINUE;	
 	}
@@ -207,12 +208,12 @@ Content-Length: %d \r\n\
 	scanPos = messageList;
 	sprintf(text,messageTpl,contentType,messageLength);
 
-    do {
-        strcat(text,*scanPos); 
-        scanPos++;
-    } while(*scanPos != NULL);
+	do {
+		strcat(text,*scanPos); 
+		scanPos++;
+	} while(*scanPos != NULL);
 
-    writeData(client,text,strlen(text));
+	writeData(client,text,strlen(text));
 
 // 在linux centos7 上运行，收不到内容的响应，暂时改成一次性发送内容
 //	do {
