@@ -197,7 +197,6 @@ int handlePostData(NClient* client) {
 			client->postData[contentLength] = '\0';
 			break;	
 		}
-		sleep(1);
 	} while(1);
 	return CONTINUE;
 }
