@@ -188,14 +188,16 @@ int cgiRequest(NClient* client) {
 
 void infoClientList(NClient *client,char** messageList,char* contentType) {
 	char **scanPos = messageList;
-	char text[2048] = {'\0'};
+	char text[Config.MaxResponseLen] ;
 	int messageLength = 0;
 	char *messageTpl = "HTTP/1.1 200 OK\r\n\
 Server: myhttp\r\n\
-Connection: closed \r\n\
+Connection: closed\r\n\
 Content-Type: %s\r\n\
 Content-Length: %d \r\n\
 \r\n";
+
+    bzero(text,Config.MaxResponseLen);
 
 	do {
 		messageLength += strlen(*scanPos);	
@@ -204,11 +206,19 @@ Content-Length: %d \r\n\
 
 	scanPos = messageList;
 	sprintf(text,messageTpl,contentType,messageLength);
-	writeData(client,text,strlen(text));
-	do {
-		writeData(client,*scanPos,strlen(*scanPos));
-		scanPos++;
-	} while(*scanPos != NULL);
+
+    do {
+        strcat(text,*scanPos); 
+        scanPos++;
+    } while(*scanPos != NULL);
+
+    writeData(client,text,strlen(text));
+
+// 在linux centos7 上运行，收不到内容的响应，暂时改成一次性发送内容
+//	do {
+//		writeData(client,*scanPos,strlen(*scanPos));
+//		scanPos++;
+//	} while(*scanPos != NULL);
 
 	//清理之前malloc的内容资源	
 	scanPos = messageList;

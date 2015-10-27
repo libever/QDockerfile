@@ -43,6 +43,7 @@ void configLine(char *line){
 		{"DEBUG",configDEBUG},
 		{"PORT",configPort},
 		{"DOCUMENT_ROOT",configDocumentRoot},
+		{"MAX_RESPONSE_LEN",configMaxResponseLen},
 		{NULL,NULL}
 	};
 
@@ -109,6 +110,10 @@ void configDEBUG(char *value) {
 
 void configPort(char *value) { 
 	Config.PORT= atoi(value);
+}
+
+void configMaxResponseLen(char *value) { 
+	Config.MaxResponseLen= atoi(value);
 }
 
 void configDocumentRoot(char *value){

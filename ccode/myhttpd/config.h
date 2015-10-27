@@ -8,6 +8,7 @@ typedef struct {
 	int ProcessBorn;
 	BOOL DEBUG;
 	int PORT ;
+        int MaxResponseLen;
 	char DocumentRoot[128];
 } ConfigT;
 
@@ -26,6 +27,7 @@ void configProcessBorn(char *);
 void configPort(char *);
 void configDEBUG(char *); 
 void configDocumentRoot(char *); 
+void configMaxResponseLen(char *); 
 
 
 #endif
