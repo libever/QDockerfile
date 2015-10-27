@@ -1,4 +1,5 @@
 #include "net.h"
+#include "config.h"
 #include "common.h"
 
 void openServer(NServer *myServer) {
@@ -136,12 +137,15 @@ BOOL initClientMethodAndUrl(NClient *client,char* firstLine) {
 	}
 
 	if(*pos == '?') {
+		pos++;
 		insertPos = 0;
 		while(*pos != ' ') {
 			client->queryString[insertPos++] = *pos;
 			pos++;
 		}
 	}
+
+	LOG("REQUEST : %s , QUERYSTRING : %s \n",client->requestUrl,client->queryString);
 
 	if(strlen(client->requestUrl) == 0) {
 		return FALSE;	
