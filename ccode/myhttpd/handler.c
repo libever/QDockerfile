@@ -176,12 +176,40 @@ int handleBySendFileContent(NClient *client){
 }
 
 int handlePostData(NClient* client) {
+	char line[256] = {'\0'};
+	char *lengthPos;
+	int contentLength;
+	if(client->rt != POST) {
+		return CONTINUE;
+	}
+	do {
+		readLine(client,line,256);
+
+		if(strncasecmp("Content-Length",line,14) == 0) {
+			lengthPos = line + 14;
+			while(*lengthPos++ != ':') ;
+			contentLength = atoi(lengthPos); 
+		}
+
+		if(0 == strcmp(line,"\r\n")){
+			client->postData = (char*)malloc(sizeof(char) * ( contentLength + 1));
+			readSize(client,client->postData,contentLength);
+			client->postData[contentLength] = '\0';
+			break;	
+		}
+		sleep(1);
+	} while(1);
 	return CONTINUE;
 }
 
 int cgiRequest(NClient* client) {
 	if (client->isCgi == TRUE) {
-		infoClient(client,"OK I DEAL WITH MY REQUEST ...",CONTENT_TYPE_HTML);
+
+		if(client->rt == POST) {
+			infoClient(client,client->postData,CONTENT_TYPE_HTML);
+		} else {
+			infoClient(client,"OK I DEAL WITH MY REQUEST ...",CONTENT_TYPE_HTML);
+		}
 		return HANDLED;	
 	}
 	return CONTINUE;
