@@ -153,12 +153,10 @@ int handleFilePermission(NClient *client){
 }
 
 int handleBySendFileContent(NClient *client){
-	char file_path[128] = {'\0'};
 	char **contentList = (char**)malloc(sizeof(char*) * 64);
 	char **listPos = contentList;
 	FILE *fp;
-
-	sprintf(file_path,"%s%s",client->server->document_root,client->requestUrl);
+	char *file_path = client->realFilePath;
 
 	//不处理目录内容和cgi请求
 	if(TRUE == isPathDir(file_path) || client->isCgi == TRUE) {
