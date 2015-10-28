@@ -6,6 +6,7 @@ BOOL doMyCgiRequest(NClient *client,char* response,int max_len){
 	int cgi_pid;
 	int content_pos = 0 ;
 	char c;
+	char queryenv[256] = {'\0'};
 
 	if (pipe(cgi_out) < 0) {
 		serverInternalError(client,"PIPE ERROR ....");	
@@ -25,7 +26,14 @@ BOOL doMyCgiRequest(NClient *client,char* response,int max_len){
 		close(cgi_out[0]);
 		close(cgi_input[1]);
 
-		printf("Hello cgi request ...");
+		if(client->rt == POST) {
+			putenv("REQUEST_METHOD=POST");	
+		} else if( client->rt == GET) {
+			putenv("REQUEST_METHOD=GET");	
+			sprintf(queryenv,"QUERY_STRING=%s",client->queryString);
+			putenv(queryenv);
+		}
+		execl(client->realFilePath,client->realFilePath,NULL);
 		exit(0);
 	} else {
 		//主进程
@@ -35,7 +43,7 @@ BOOL doMyCgiRequest(NClient *client,char* response,int max_len){
 			write(cgi_input[1],client->postData,strlen(client->postData));	
 		}
 
-		while(read(cgi_out[0],&c,1)) {
+		while(read(cgi_out[0],&c,1) && max_len-- >= 1 ) {
 				response[content_pos++] = c;
 		}
 

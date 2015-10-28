@@ -20,6 +20,7 @@ int handlePathPermission(NClient *);
 
 void infoClient(NClient *,char*,char*);
 void infoClientList(NClient *,char**,char*);
+void cgiContent(NClient *,char*);
 void serverInternalError(NClient *,char*);
 void* loopRequest(void *);
 char* fileExt(char*);

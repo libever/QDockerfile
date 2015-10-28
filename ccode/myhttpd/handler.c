@@ -130,9 +130,6 @@ int handleFilePermission(NClient *client){
 		}
 		allowPos++;
 	}
-	if( FALSE == urlAllow) {
-		printfRed(".....  TYPE NOT FOUND ........\n");
-	}
 
 	if(strcasecmp("cgi",file_ext_pos) == 0 ) {
 		client->isCgi = TRUE;	
@@ -141,6 +138,7 @@ int handleFilePermission(NClient *client){
 	}
 
 	if(urlAllow == FALSE) {
+		printfRed(".....  TYPE NOT FOUND ........\n");
 		serverInternalError(client,"<p>You can't request this type of file ! </p>\n");
 		return HANDLED;
 	}
@@ -225,7 +223,8 @@ int cgiRequest(NClient* client) {
 		 fclose(cgiFp);
 
 		if( TRUE == doMyCgiRequest(client,response,Config.MaxResponseLen) ){
-			infoClient(client,response,CONTENT_TYPE_HTML);
+			/*infoClient(client,response,CONTENT_TYPE_HTML);*/
+			cgiContent(client,response);
 		} else {
 			// ERROR 出错了	
 		}
@@ -318,6 +317,14 @@ Connection: closed \r\n\
 %s%s";
 		sprintf(text,messageTpl,CONTENT_TYPE_HTML,strlen(errorMessage) + strlen(noPermissonMessage) ,noPermissonMessage,errorMessage);
 		writeData(client,text,strlen(text));
+}
+
+void cgiContent(NClient *client,char* buffer) {
+	char text[Config.MaxResponseLen] ;
+	bzero(text,Config.MaxResponseLen);
+	char *tpl = "HTTP/1.1 200 OK\r\n%s";
+	sprintf(text,tpl,buffer);
+	writeData(client,text,strlen(text));
 }
 
 BOOL isPathDir(char *path) {
