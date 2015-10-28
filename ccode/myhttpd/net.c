@@ -145,6 +145,8 @@ BOOL initClientMethodAndUrl(NClient *client,char* firstLine) {
 		}
 	}
 
+	sprintf(client->realFilePath,"%s%s",client->server->document_root,client->requestUrl);
+
 	if(strlen(client->requestUrl) == 0) {
 		return FALSE;	
 	}

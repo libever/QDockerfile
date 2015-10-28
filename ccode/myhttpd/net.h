@@ -21,6 +21,7 @@ typedef struct NetClient {
 	struct sockaddr_in clientAddress;
 	RequestType rt ;
 	char requestUrl[256]; 
+	char realFilePath[256];
 	char queryString[512];
 	char *postData;
 	NServer *server;
