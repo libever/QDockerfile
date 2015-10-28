@@ -1,6 +1,7 @@
 #include "handler.h"
 #include "common.h"
 #include "config.h"
+#include "mycgi.h"
 #include <pthread.h>
 #include <time.h>
 #include<sys/stat.h>
@@ -15,37 +16,37 @@ void loopMainHandler(NServer *myServer) {
 	pid_t fpid;
 	pid_t pids[process_born];
 
-    if(TRUE == Config.DEBUG) {
-        currentPid = getpid();
-        while(1){
-            client = readMyClient(myServer,90);		
-            if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
-                ExitMessage("thread create failed ... ");
-            }
-        }
-    } else {
-        for ( ; process_count < process_born ; process_count++) {
-            fpid = fork();
-            if (fpid < 0 ) {
-                ExitMessage("fork failed");
-            } else if (fpid > 0) {
-                pids[process_count] = fpid;
-            } else {
-                currentPid = getpid();
-                while(1){
-                    client = readMyClient(myServer,90);		
-                    if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
-                        ExitMessage("thread create failed ... ");
-                    }
-                }
-            }
-        }
-        for( process_count = 0 ; process_count < process_born ; process_count++ ) {
-            waitpid(pids[process_count],NULL,0);	
-        }
-        //主进程自行退出
-        if(currentPid == 0 ) exit(0);
-    }
+	if(TRUE == Config.DEBUG) {
+		currentPid = getpid();
+		while(1){
+			client = readMyClient(myServer,90);		
+			if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
+				ExitMessage("thread create failed ... ");
+			}
+		}
+	} else {
+		for ( ; process_count < process_born ; process_count++) {
+			fpid = fork();
+			if (fpid < 0 ) {
+				ExitMessage("fork failed");
+			} else if (fpid > 0) {
+				pids[process_count] = fpid;
+			} else {
+				currentPid = getpid();
+				while(1){
+					client = readMyClient(myServer,90);		
+					if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
+						ExitMessage("thread create failed ... ");
+					}
+				}
+			}
+		}
+		for( process_count = 0 ; process_count < process_born ; process_count++ ) {
+			waitpid(pids[process_count],NULL,0);	
+		}
+		//主进程自行退出
+		if(currentPid == 0 ) exit(0);
+	}
 }
 
 void * loopRequest(void *arg){
@@ -211,13 +212,11 @@ int handlePostData(NClient* client) {
 }
 
 int cgiRequest(NClient* client) {
+	char response[Config.MaxResponseLen];
+	bzero(response,Config.MaxResponseLen);
 	if (client->isCgi == TRUE) {
-
-		if(client->rt == POST) {
-			infoClient(client,client->postData,CONTENT_TYPE_HTML);
-		} else {
-			infoClient(client,"OK I DEAL WITH MY REQUEST ...",CONTENT_TYPE_HTML);
-		}
+		doMyCgiRequest(client,response,Config.MaxResponseLen);
+		infoClient(client,response,CONTENT_TYPE_HTML);
 		return HANDLED;	
 	}
 	return CONTINUE;

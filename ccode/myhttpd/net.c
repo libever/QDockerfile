@@ -152,11 +152,6 @@ BOOL initClientMethodAndUrl(NClient *client,char* firstLine) {
 	return TRUE;
 }
 
-BOOL initPostData(NClient *client){
-
-	return TRUE;
-}
-
 void freeClient(NClient *client){
 	close(client->clientSocket);
 	if(NULL != client->postData) {
