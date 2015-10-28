@@ -7,6 +7,7 @@ BOOL doMyCgiRequest(NClient *client,char* response,int max_len){
 	int content_pos = 0 ;
 	char c;
 	char queryenv[256] = {'\0'};
+	char content_lenenv[256] = {'\0'};
 
 	if (pipe(cgi_out) < 0) {
 		serverInternalError(client,"PIPE ERROR ....");	
@@ -28,6 +29,8 @@ BOOL doMyCgiRequest(NClient *client,char* response,int max_len){
 
 		if(client->rt == POST) {
 			putenv("REQUEST_METHOD=POST");	
+			sprintf(content_lenenv,"CONTENT_LENGTH=%lu",strlen(client->postData));
+			putenv(content_lenenv);
 		} else if( client->rt == GET) {
 			putenv("REQUEST_METHOD=GET");	
 			sprintf(queryenv,"QUERY_STRING=%s",client->queryString);
