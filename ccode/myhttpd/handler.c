@@ -105,7 +105,7 @@ int handleFilePermission(NClient *client){
 	char *url_end_pos = url + strlen(url), *file_ext_pos  = url_end_pos;
 	char file_name[64] = {'\0'};
 	int file_name_len = 0;
-	char *allowExt[] = {"txt","html","css","js","cgi"};
+	char *allowExt[] = {"txt","html","css","js","cgi",NULL};
 	char **allowPos = allowExt;
 	BOOL urlAllow = FALSE;
 
@@ -130,6 +130,8 @@ int handleFilePermission(NClient *client){
 		}
 		allowPos++;
 	}
+
+	printfRed(".....  NOT FOUND .............\n");
 
 	if(strcasecmp("cgi",file_ext_pos) == 0 ) {
 		client->isCgi = TRUE;	
@@ -213,8 +215,11 @@ int cgiRequest(NClient* client) {
 	char response[Config.MaxResponseLen];
 	bzero(response,Config.MaxResponseLen);
 	if (client->isCgi == TRUE) {
-		doMyCgiRequest(client,response,Config.MaxResponseLen);
-		infoClient(client,response,CONTENT_TYPE_HTML);
+		if( TRUE == doMyCgiRequest(client,response,Config.MaxResponseLen) ){
+			infoClient(client,response,CONTENT_TYPE_HTML);
+		} else {
+			// ERROR 出错了	
+		}
 		return HANDLED;	
 	}
 	return CONTINUE;

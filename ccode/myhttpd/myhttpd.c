@@ -16,7 +16,7 @@ int main(int argc, char** argv){
 		configFile = argv[1];	
 	}
 
-	printf(">>>>>>>>>>>>>>>>> <<<<<<<<<<<<<<<<<\n");
+	printfGreen(">>>>>>>>>>>>>>>>>>>>>>>>>>>>    <<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
 	printf("\n");
 	initConfig(configFile);
 	myServer = initNServer(Config.PORT,Config.ProcessBorn,Config.DocumentRoot);

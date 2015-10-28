@@ -24,4 +24,5 @@ void serverInternalError(NClient *,char*);
 void* loopRequest(void *);
 char* fileExt(char*);
 BOOL isPathDir(char *path);
+
 #endif

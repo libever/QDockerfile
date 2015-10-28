@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <time.h>
+#include "color.h"
 
 #define ExitMessage(message) printf("%s\n",message);exit(1);
 #define tolower(c)      (u_char) ((c >= 'A' && c <= 'Z') ? (c | 0x20) : c)
