@@ -145,8 +145,6 @@ BOOL initClientMethodAndUrl(NClient *client,char* firstLine) {
 		}
 	}
 
-	LOG("REQUEST : %s , QUERYSTRING : %s \n",client->requestUrl,client->queryString);
-
 	if(strlen(client->requestUrl) == 0) {
 		return FALSE;	
 	}
