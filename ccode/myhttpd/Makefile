@@ -1,22 +1,24 @@
+params=-g -W -Wall
+
 all: myhttpd 
 
 myhttpd: myhttpd.c net.o handler.o config.o color.o mycgi.o
-	gcc -g -W -Wall  -lpthread -o myhttpd myhttpd.c net.o handler.o config.o color.o mycgi.o
+	gcc ${params}  -lpthread -o myhttpd myhttpd.c net.o handler.o config.o color.o mycgi.o
 
 net.o:net.c net.h
-	gcc -g -W -Wall -c net.c
+	gcc ${params} -c net.c
 
 handler.o:handler.c handler.h
-	gcc -g -W -Wall -c handler.c
+	gcc ${params} -c handler.c
 
 color.o:color.c color.h
-	gcc -g -W -Wall -c color.c
+	gcc ${params} -c color.c
 
 config.o:config.c config.h common.h
-	gcc -g -W -Wall -c config.c
+	gcc ${params} -c config.c
 
 mycgi.o:mycgi.c mycgi.h common.h
-	gcc -g -W -Wall -c mycgi.c
+	gcc ${params} -c mycgi.c
 
 clean:
 	rm myhttpd *.o

@@ -15,6 +15,7 @@ void closeServer(NServer *myServer) {
 	close(myServer->serverSocket);	
 	if(NULL != myServer) {
 		free(myServer);
+		myServer = NULL;
 	}
 }
 
@@ -158,9 +159,11 @@ void freeClient(NClient *client){
 	close(client->clientSocket);
 	if(NULL != client->postData) {
 		free(client->postData);	
+		client->postData = NULL;
 	}
 	if(NULL != client) {
 		free(client);
+		client = NULL;
 	}
 }
 

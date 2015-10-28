@@ -105,7 +105,7 @@ int handleFilePermission(NClient *client){
 	char *url_end_pos = url + strlen(url), *file_ext_pos  = url_end_pos;
 	char file_name[64] = {'\0'};
 	int file_name_len = 0;
-	char *allowExt[] = {"txt","html","css","js","cgi",NULL};
+	char *allowExt[] = {"txt","html","css","js","cgi","ico",NULL};
 	char **allowPos = allowExt;
 	BOOL urlAllow = FALSE;
 
@@ -162,6 +162,7 @@ int handleBySendFileContent(NClient *client){
 	//不处理目录内容和cgi请求
 	if(TRUE == isPathDir(file_path) || client->isCgi == TRUE) {
 		free(contentList);
+		contentList = NULL;
 		return CONTINUE;	
 	}
 
@@ -271,9 +272,11 @@ Content-Length: %d \r\n\
 	scanPos = messageList;
 	do {
 		free(*scanPos);
+		*scanPos = NULL;
 		scanPos++;
 	} while(*scanPos != NULL);
 	free(messageList);
+	messageList = NULL;
 }
 
 void infoClient(NClient *client,char* message,char* contentType) {
