@@ -130,8 +130,9 @@ int handleFilePermission(NClient *client){
 		}
 		allowPos++;
 	}
-
-	printfRed(".....  NOT FOUND .............\n");
+	if( FALSE == urlAllow) {
+		printfRed(".....  TYPE NOT FOUND ........\n");
+	}
 
 	if(strcasecmp("cgi",file_ext_pos) == 0 ) {
 		client->isCgi = TRUE;	
@@ -166,7 +167,7 @@ int handleBySendFileContent(NClient *client){
 		return CONTINUE;	
 	}
 
-	LOG("FOPEN THIS FILE : %s\n",file_path);
+	LOG("Fopen file : %s\n",file_path);
 	fp = fopen(file_path,"r");
 
 	if(fp <= 0) {
@@ -213,8 +214,16 @@ int handlePostData(NClient* client) {
 
 int cgiRequest(NClient* client) {
 	char response[Config.MaxResponseLen];
+	FILE *cgiFp;
 	bzero(response,Config.MaxResponseLen);
 	if (client->isCgi == TRUE) {
+		 cgiFp = fopen(client->realFilePath,"r");
+		 if(cgiFp <= 0) {
+			 fclose(cgiFp);
+			 return CONTINUE;
+		 }
+		 fclose(cgiFp);
+
 		if( TRUE == doMyCgiRequest(client,response,Config.MaxResponseLen) ){
 			infoClient(client,response,CONTENT_TYPE_HTML);
 		} else {
