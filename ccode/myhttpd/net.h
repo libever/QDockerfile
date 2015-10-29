@@ -23,10 +23,12 @@ typedef struct NetClient {
 	char requestUrl[256]; 
 	char realFilePath[256];
 	char queryString[512];
+	// malloc free 动态分配
 	char *postData;
 	NServer *server;
 	char filetype[5];
 	BOOL isCgi;
+	char *content_type;
 } NClient ;
 
 typedef void (*loopHanlder)(NServer*);
