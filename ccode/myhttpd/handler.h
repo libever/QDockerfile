@@ -10,6 +10,11 @@
 
 #define CONTENT_TYPE_HTML "text/html"
 
+typedef struct {
+	char *file_ext;
+	char *content_type;
+} mimetype ;
+
 void loopMainHandler(NServer *);
 int handleBySendFileContent(NClient *);
 int handlePostData(NClient *);
