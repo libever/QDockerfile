@@ -7,6 +7,17 @@
 #include<sys/stat.h>
 
 static pid_t currentPid;
+static mimetype all_types[] = {
+	{"html","text/html"},
+	{"htm","text/html"},
+	{"jpg","image/jpeg"},
+	{"jpeg","image/jpeg"},
+	{"png","image/png"},
+	{"js","application/x-javascript"},
+	{"css","text/css"},
+	{"cgi","text/notype"},
+	{NULL,NULL}
+};
 
 void loopMainHandler(NServer *myServer) {
 	NClient *client;
