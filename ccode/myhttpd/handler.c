@@ -171,13 +171,17 @@ int handleBySendFileContent(NClient *client){
 	FILE *fp;
 	char *file_path = client->realFilePath;
 
-	//不处理目录内容和cgi请求
-	if(TRUE == isPathDir(file_path) || client->isCgi == TRUE) {
+	//不处理cgi请求
+	if(client->isCgi == TRUE) {
 		free(contentList);
 		contentList = NULL;
 		return CONTINUE;	
 	}
 
+	//如果是目录，附加上index.html
+	if( TRUE == isPathDir(file_path) ) {
+		strcat(file_path,"index.html");	
+	}
 	fp = fopen(file_path,"r");
 
 	if(fp == NULL) {
