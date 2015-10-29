@@ -116,8 +116,9 @@ int handleFilePermission(NClient *client){
 	char *url_end_pos = url + strlen(url), *file_ext_pos  = url_end_pos;
 	char file_name[64] = {'\0'};
 	int file_name_len = 0;
-	char *allowExt[] = {"txt","html","css","js","cgi","ico",NULL};
-	char **allowPos = allowExt;
+
+	mimetype *typepos = all_types;
+
 	BOOL urlAllow = FALSE;
 
 	while(*url_end_pos != '/') {
@@ -134,14 +135,14 @@ int handleFilePermission(NClient *client){
 		return CONTINUE;	
 	}
 
-	while(*allowPos!= NULL){
-		if(strcasecmp(*allowPos,file_ext_pos) == 0 ) {
+	while(typepos->file_ext != NULL) {
+		if(strcasecmp(typepos->file_ext,file_ext_pos) == 0 ) {
 			urlAllow = TRUE;
 			break;
 		}
-		allowPos++;
+		typepos++;
 	}
-
+	
 	if(strcasecmp("cgi",file_ext_pos) == 0 ) {
 		client->isCgi = TRUE;	
 	} else {
@@ -177,7 +178,6 @@ int handleBySendFileContent(NClient *client){
 		return CONTINUE;	
 	}
 
-	LOG("Fopen file : %s\n",file_path);
 	fp = fopen(file_path,"r");
 
 	if(fp == NULL) {
