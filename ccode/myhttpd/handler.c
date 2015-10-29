@@ -151,7 +151,6 @@ int handleFilePermission(NClient *client){
 	}
 
 	if(urlAllow == FALSE) {
-		printfRed(".....  TYPE NOT FOUND ........\n");
 		serverInternalError(client,"<p>You can't request this type of file ! </p>\n");
 		return HANDLED;
 	}
@@ -194,7 +193,7 @@ int handleBySendFileContent(NClient *client){
 	fclose(fp);
 	*listPos = NULL;
 
-	infoClientList(client,contentList,CONTENT_TYPE_HTML);
+	infoClientList(client,contentList,client->content_type);
 	return HANDLED;
 }
 
