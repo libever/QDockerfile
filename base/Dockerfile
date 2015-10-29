@@ -4,5 +4,5 @@ RUN yum install -y gcc.x86_64 automake.noarch pcre-devel.x86_64 zlib-devel.x86_6
 
 ADD a.c /root/a.c
 ADD a.sh /root/a.sh
+ADD chinese_lang.sh /root/chinese_lang.sh
 RUN /bin/sh /root/a.sh
-
