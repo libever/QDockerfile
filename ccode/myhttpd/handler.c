@@ -166,10 +166,13 @@ int handleFilePermission(NClient *client){
 }
 
 int handleBySendFileContent(NClient *client){
-	char **contentList = (char**)malloc(sizeof(char*) * 64);
+	char **contentList = (char**)malloc(sizeof(char*) * Config.MaxBlocks);
+	int sizeList[Config.MaxBlocks];
 	char **listPos = contentList;
 	FILE *fp;
 	char *file_path = client->realFilePath;
+	int block_read = 0;
+	int bytes_read = 0;
 
 	//不处理cgi请求
 	if(client->isCgi == TRUE) {
@@ -182,22 +185,23 @@ int handleBySendFileContent(NClient *client){
 	if( TRUE == isPathDir(file_path) ) {
 		strcat(file_path,"index.html");	
 	}
-	fp = fopen(file_path,"r");
+	fp = fopen(file_path,"rb");
 
 	if(fp == NULL) {
 		return CONTINUE;	
 	}
 
 	while(!feof(fp)) {
-		*listPos = (char*) malloc(sizeof(char) * 128);
-		bzero(*listPos,128);
-		fread(*listPos,127,1,fp);
+		*listPos = (char*) malloc(sizeof(char) * Config.BlockSize);
+		bzero(*listPos,Config.BlockSize);
+		bytes_read = fread(*listPos,1,Config.BlockSize,fp);
 		listPos++;
+		sizeList[block_read++] = bytes_read;
 	}
 	fclose(fp);
 	*listPos = NULL;
 
-	infoClientList(client,contentList,client->content_type);
+	infoClientList(client,contentList,sizeList,client->content_type);
 	return HANDLED;
 }
 
@@ -247,9 +251,9 @@ int cgiRequest(NClient* client) {
 	return CONTINUE;
 }
 
-void infoClientList(NClient *client,char** messageList,char* contentType) {
+void infoClientList(NClient *client,char** messageList,int sizeList[],char* contentType) {
 	char **scanPos = messageList;
-	char text[Config.MaxResponseLen] ;
+	char *text = (char*) malloc(Config.MaxResponseLen * sizeof(char));
 	int messageLength = 0;
 	char *messageTpl = "HTTP/1.1 200 OK\r\n\
 Server: myhttp\r\n\
@@ -257,23 +261,24 @@ Connection: closed\r\n\
 Content-Type: %s\r\n\
 Content-Length: %d \r\n\
 \r\n";
-
-    bzero(text,Config.MaxResponseLen);
-
+	char *endpos ;
+	bzero(text,Config.MaxResponseLen);
 	do {
-		messageLength += strlen(*scanPos);	
+		messageLength += sizeList[scanPos - messageList];	
 		scanPos++;
 	} while(*scanPos != NULL);
 
 	scanPos = messageList;
 	sprintf(text,messageTpl,contentType,messageLength);
+	endpos = text + strlen(text);
 
 	do {
-		strcat(text,*scanPos); 
+		memcpy(endpos, *scanPos,sizeList[scanPos - messageList]);
+		endpos += sizeList[scanPos - messageList];
 		scanPos++;
 	} while(*scanPos != NULL);
 
-	writeData(client,text,strlen(text));
+	writeData(client,text,endpos - text);
 
 // 在linux centos7 上运行，收不到内容的响应，暂时改成一次性发送内容
 //	do {
@@ -290,6 +295,9 @@ Content-Length: %d \r\n\
 	} while(*scanPos != NULL);
 	free(messageList);
 	messageList = NULL;
+
+	free(text);
+	text = NULL;
 }
 
 void infoClient(NClient *client,char* message,char* contentType) {
