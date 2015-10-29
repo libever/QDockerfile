@@ -44,6 +44,8 @@ void configLine(char *line){
 		{"PORT",configPort},
 		{"DOCUMENT_ROOT",configDocumentRoot},
 		{"MAX_RESPONSE_LEN",configMaxResponseLen},
+		{"MAX_BLOCKS",configMaxBlocks},
+		{"BLOCK_SIZE",configBlockSize},
 		{NULL,NULL}
 	};
 
@@ -119,3 +121,13 @@ void configMaxResponseLen(char *value) {
 void configDocumentRoot(char *value){
 	strcpy(Config.DocumentRoot,value);
 }
+
+void configBlockSize(char *value) { 
+	Config.BlockSize = atoi(value);
+}
+
+void configMaxBlocks(char *value) { 
+	Config.MaxBlocks= atoi(value);
+}
+
+
