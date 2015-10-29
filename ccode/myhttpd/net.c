@@ -127,7 +127,7 @@ BOOL initClientMethodAndUrl(NClient *client,char* firstLine) {
 	char *pos = firstLine;
 	int insertPos = 0;
 
-	if( NULL != client || firstLine != NULL || strlen(firstLine) < 4) {
+	if( NULL == client || firstLine == NULL || strlen(firstLine) < 4) {
 		return FALSE;
 	}
 
