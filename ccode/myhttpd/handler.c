@@ -138,6 +138,7 @@ int handleFilePermission(NClient *client){
 	while(typepos->file_ext != NULL) {
 		if(strcasecmp(typepos->file_ext,file_ext_pos) == 0 ) {
 			urlAllow = TRUE;
+			client->content_type = typepos->content_type;
 			break;
 		}
 		typepos++;
