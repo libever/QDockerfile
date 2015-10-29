@@ -1,4 +1,4 @@
-params=-g -W -Wall
+params=-g -Wall -W
 
 all: myhttpd 
 

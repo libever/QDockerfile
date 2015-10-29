@@ -169,8 +169,7 @@ int handleBySendFileContent(NClient *client){
 	LOG("Fopen file : %s\n",file_path);
 	fp = fopen(file_path,"r");
 
-	if(fp <= 0) {
-		fclose(fp);
+	if(fp == NULL) {
 		return CONTINUE;	
 	}
 
@@ -217,8 +216,7 @@ int cgiRequest(NClient* client) {
 	bzero(response,Config.MaxResponseLen);
 	if (client->isCgi == TRUE) {
 		 cgiFp = fopen(client->realFilePath,"r");
-		 if(cgiFp <= 0) {
-			 fclose(cgiFp);
+		 if(cgiFp == NULL) {
 			 return CONTINUE;
 		 }
 		 fclose(cgiFp);

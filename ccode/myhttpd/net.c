@@ -26,7 +26,7 @@ void loopServer(NServer *myServer ,loopHanlder handler) {
 NServer* initNServer(int port, int process_born,char* document_root) {
 	NServer *newServer = (NServer*)malloc(sizeof(NServer));
 	struct sockaddr_in name;
-	int on = 1, ret;
+	int on = 1 ,ret = 0;
 
 	newServer->serverSocket = socket(PF_INET, SOCK_STREAM, 0);
 	if (newServer->serverSocket == -1) {
@@ -34,6 +34,10 @@ NServer* initNServer(int port, int process_born,char* document_root) {
 	}
 
 	ret = setsockopt(newServer->serverSocket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on) );
+
+	if( 0 != ret ) {
+		ExitMessage("socket set option error ");
+	}
 
 	memset(&name, 0, sizeof(name));
 	name.sin_family = AF_INET;
@@ -100,7 +104,17 @@ NClient * readMyClient(NServer *myServer,int seconds){
 		ExitMessage("accept failed ...");
 	}
 	timeoutres = setsockopt(newClient->clientSocket,SOL_SOCKET,SO_SNDTIMEO,(const char*)&timeout,sizeof(timeout));
+
+	if( 0 != timeoutres ) {
+		ExitMessage("socket set option error ");
+	}
+
 	timeoutres = setsockopt(newClient->clientSocket,SOL_SOCKET,SO_RCVTIMEO,(const char*)&timeout,sizeof(timeout));
+
+	if( 0 != timeoutres ) {
+		ExitMessage("socket set option error ");
+	}
+
 	newClient->rt = NONE ;
 	bzero(newClient->requestUrl,256);
 	newClient->server = myServer;
@@ -146,6 +160,7 @@ BOOL initClientMethodAndUrl(NClient *client,char* firstLine) {
 		}
 	}
 
+	printf("Request : %s \n",client->requestUrl);
 	sprintf(client->realFilePath,"%s%s",client->server->document_root,client->requestUrl);
 
 	if(strlen(client->requestUrl) == 0) {
