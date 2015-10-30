@@ -197,6 +197,8 @@ int handleBySendFileContent(NClient *client){
 	//如果是目录，附加上index.html
 	if( TRUE == isPathDir(file_path) ) {
 		strcat(file_path,"index.html");	
+		client->content_type = CONTENT_TYPE_HTML;
+		printf("NO CONTENT_TYPE : %s\n",client->content_type);
 	}
 	fp = fopen(file_path,"rb");
 
