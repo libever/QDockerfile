@@ -31,10 +31,15 @@ void loopMainHandler(NServer *myServer) {
 		currentPid = getpid();
 		while(1){
 			client = readMyClient(myServer,90);		
-			if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
-				ExitMessage("thread create failed ... ");
-			}
-		}
+            if(Config.NOTHREAD) {
+                loopRequest((void*)client);
+            } else {
+                if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
+			    	ExitMessage("thread create failed ... ");
+			    }
+
+            }
+        }
 	} else {
 		for ( ; process_count < process_born ; process_count++) {
 			fpid = fork();
@@ -46,9 +51,13 @@ void loopMainHandler(NServer *myServer) {
 				currentPid = getpid();
 				while(1){
 					client = readMyClient(myServer,90);		
-					if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
-						ExitMessage("thread create failed ... ");
-					}
+                    if(Config.NOTHREAD) {
+                        loopRequest((void*)client);
+                    } else {
+                        if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
+                            ExitMessage("thread create failed ... ");
+                        }
+                    }
 				}
 			}
 		}

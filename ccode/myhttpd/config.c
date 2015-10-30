@@ -46,6 +46,7 @@ void configLine(char *line){
 		{"MAX_RESPONSE_LEN",configMaxResponseLen},
 		{"MAX_BLOCKS",configMaxBlocks},
 		{"BLOCK_SIZE",configBlockSize},
+		{"NOTHREAD",configThread},
 		{NULL,NULL}
 	};
 
@@ -108,6 +109,10 @@ void configProcessBorn(char *value) {
 
 void configDEBUG(char *value) { 
 	Config.DEBUG = strncasecmp(value,"TRUE",4) == 0 ? TRUE : FALSE;
+}
+
+void configThread(char *value) {
+	Config.NOTHREAD = strncasecmp(value,"TRUE",4) == 0 ? TRUE : FALSE;
 }
 
 void configPort(char *value) { 

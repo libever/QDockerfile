@@ -7,6 +7,7 @@
 typedef struct {
 	int ProcessBorn;
 	BOOL DEBUG;
+        BOOL NOTHREAD;
 	int PORT ;
 	int MaxResponseLen;
 	char DocumentRoot[128];
@@ -32,6 +33,7 @@ void configDocumentRoot(char *);
 void configMaxResponseLen(char *); 
 void configBlockSize(char *); 
 void configMaxBlocks(char *); 
+void configThread(char *); 
 
 
 #endif
