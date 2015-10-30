@@ -98,7 +98,6 @@ void * loopRequest(void *arg){
 						handler = NULL;
 						break;
 					case CONTINUE:
-						printf("SUB HANDLER RETURN : %d\n",requestRes);
 						handler = handlerList[++handlerIndex];
 						break;
 					default :
@@ -252,7 +251,6 @@ int cgiRequest(NClient* client) {
 		 fclose(cgiFp);
 
 		if( TRUE == doMyCgiRequest(client,response,Config.MaxResponseLen) ){
-			/*infoClient(client,response,CONTENT_TYPE_HTML);*/
 			cgiContent(client,response);
 		} else {
 			// ERROR 出错了	
@@ -313,6 +311,7 @@ Content-Length: %d \r\n\
 	text = NULL;
 }
 
+//信息量较少
 void infoClient(NClient *client,char* message,char* contentType) {
 	char text[2048] = {'\0'};
 	int messageLength = strlen(message) ;
@@ -357,11 +356,12 @@ Connection: closed \r\n\
 }
 
 void cgiContent(NClient *client,char* buffer) {
-	char text[Config.MaxResponseLen] ;
+	char *text = (char*)malloc(sizeof(char) * Config.MaxResponseLen) ;
 	bzero(text,Config.MaxResponseLen);
 	char *tpl = "HTTP/1.1 200 OK\r\n%s";
 	sprintf(text,tpl,buffer);
 	writeData(client,text,strlen(text));
+	free(text);
 }
 
 BOOL isPathDir(char *path) {
