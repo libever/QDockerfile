@@ -47,6 +47,7 @@ void configLine(char *line){
 		{"MAX_BLOCKS",configMaxBlocks},
 		{"BLOCK_SIZE",configBlockSize},
 		{"NOTHREAD",configThread},
+		{"LOG_PATH",configLogPath},
 		{NULL,NULL}
 	};
 
@@ -135,4 +136,6 @@ void configMaxBlocks(char *value) {
 	Config.MaxBlocks= atoi(value);
 }
 
-
+void configLogPath(char *value) {
+	strcpy(Config.LogPath,value);
+}

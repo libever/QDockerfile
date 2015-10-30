@@ -3,16 +3,16 @@
 
 #include "common.h"
 
-
 typedef struct {
 	int ProcessBorn;
 	BOOL DEBUG;
-        BOOL NOTHREAD;
+	BOOL NOTHREAD;
 	int PORT ;
 	int MaxResponseLen;
 	char DocumentRoot[128];
 	int MaxBlocks;
 	int BlockSize;
+	char LogPath[128];
 } ConfigT;
 
 typedef struct {
@@ -34,6 +34,6 @@ void configMaxResponseLen(char *);
 void configBlockSize(char *); 
 void configMaxBlocks(char *); 
 void configThread(char *); 
-
+void configLogPath(char *); 
 
 #endif
