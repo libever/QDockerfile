@@ -31,7 +31,7 @@ void loopMainHandler(NServer *myServer) {
 		currentPid = getpid();
 		while(1){
 			client = readMyClient(myServer,90);		
-            if(Config.NOTHREAD) {
+            if(TRUE == Config.NOTHREAD) {
                 loopRequest((void*)client);
             } else {
                 if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
@@ -98,6 +98,7 @@ void * loopRequest(void *arg){
 						handler = NULL;
 						break;
 					case CONTINUE:
+						printf("SUB HANDLER RETURN : %d\n",requestRes);
 						handler = handlerList[++handlerIndex];
 						break;
 					default :
@@ -239,12 +240,13 @@ int handlePostData(NClient* client) {
 }
 
 int cgiRequest(NClient* client) {
-	char response[Config.MaxResponseLen];
+	char *response = (char*)malloc(sizeof(char) * Config.MaxResponseLen);
 	FILE *cgiFp;
 	bzero(response,Config.MaxResponseLen);
 	if (client->isCgi == TRUE) {
 		 cgiFp = fopen(client->realFilePath,"r");
 		 if(cgiFp == NULL) {
+			 free(response);
 			 return CONTINUE;
 		 }
 		 fclose(cgiFp);
@@ -255,8 +257,10 @@ int cgiRequest(NClient* client) {
 		} else {
 			// ERROR 出错了	
 		}
+		free(response);
 		return HANDLED;	
 	}
+	free(response);
 	return CONTINUE;
 }
 
@@ -335,7 +339,7 @@ Connection: closed \r\n\
 %s";
 		sprintf(text,messageTpl,CONTENT_TYPE_HTML,strlen(notFindMessage),notFindMessage);
 		writeData(client,text,strlen(text));
-	return HANDLED;
+		return HANDLED;
 }
 
 void serverInternalError(NClient *client,char* errorMessage) {
