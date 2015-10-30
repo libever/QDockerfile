@@ -97,7 +97,10 @@ NClient * readMyClient(NServer *myServer,int seconds){
 	struct timeval timeout = {seconds,0};
 	int clientAddrSize = sizeof(newClient->clientAddress);
 
-	newClient	= (struct NetClient *) malloc(sizeof(struct NetClient));
+	newClient = (struct NetClient *) malloc(sizeof(struct NetClient));
+	if( NULL == newClient) {
+		return NULL;	
+	}
 	newClient->clientSocket = accept(myServer->serverSocket,(struct sockaddr *)&newClient->clientAddress,(socklen_t *)&clientAddrSize);
 
 	if(newClient->clientSocket == -1) {
@@ -177,7 +180,8 @@ BOOL initClientMethodAndUrl(NClient *client,char* firstLine) {
 
 void freeClient(NClient *client){
 	close(client->clientSocket);
-	if(NULL != client->postData) {
+	if(POST == client->rt && NULL != client->postData) {
+		printf("WILL FREE : %d\n",client->postData);
 		free(client->postData);	
 		client->postData = NULL;
 	}
