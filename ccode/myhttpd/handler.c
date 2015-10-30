@@ -13,9 +13,12 @@ static mimetype all_types[] = {
 	{"jpg","image/jpeg"},
 	{"jpeg","image/jpeg"},
 	{"png","image/png"},
-	{"js","application/x-javascript"},
+	{"ico","image/x-icon"},
 	{"css","text/css"},
 	{"cgi","text/notype"},
+	{"gif","image/gif"},
+	{"woff","application/x-font-woff"},
+	{"js","application/x-javascript"},
 	{NULL,NULL}
 };
 
@@ -134,6 +137,7 @@ int handleFilePermission(NClient *client){
 		url_end_pos--;	
 		if(*url_end_pos == '.'){
 			file_ext_pos = url_end_pos + 1;	
+			break;
 		}
 	}
 

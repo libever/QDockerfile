@@ -1,5 +1,0 @@
-hello world
-this is a test file
-you know how to 
-get it 
-deal it

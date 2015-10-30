@@ -181,7 +181,6 @@ BOOL initClientMethodAndUrl(NClient *client,char* firstLine) {
 void freeClient(NClient *client){
 	close(client->clientSocket);
 	if(POST == client->rt && NULL != client->postData) {
-		printf("WILL FREE : %d\n",client->postData);
 		free(client->postData);	
 		client->postData = NULL;
 	}
