@@ -13,6 +13,8 @@ typedef struct {
 	int MaxBlocks;
 	int BlockSize;
 	char LogPath[128];
+	char ModulePath[128];
+	char LoadModules[512];
 } ConfigT;
 
 typedef struct {
@@ -35,5 +37,7 @@ void configBlockSize(char *);
 void configMaxBlocks(char *); 
 void configThread(char *); 
 void configLogPath(char *); 
+void configModulePath(char *); 
+void configLoadModules(char *); 
 
 #endif

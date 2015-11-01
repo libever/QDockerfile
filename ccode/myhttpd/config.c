@@ -29,14 +29,14 @@ void configLine(char *line){
 			return;	
 	}
 
-	printf("%s\n",line);
-
 	while(*configValue != ' ') {
 		configValue++;	
 	}
 
 	*configValue = '\0';
 	configValue++;
+
+	printf("%s:%s\n",configName,configValue);
 	
 	ConfigEntry entryList[] = {
 		{"PROCESS_BORN",configProcessBorn},
@@ -48,6 +48,8 @@ void configLine(char *line){
 		{"BLOCK_SIZE",configBlockSize},
 		{"NOTHREAD",configThread},
 		{"LOG_PATH",configLogPath},
+		{"MODULE_PATH",configModulePath},
+		{"LOAD_MODULES",configLoadModules},
 		{NULL,NULL}
 	};
 
@@ -138,4 +140,12 @@ void configMaxBlocks(char *value) {
 
 void configLogPath(char *value) {
 	strcpy(Config.LogPath,value);
+}
+
+void configModulePath(char *value) {
+	strcpy(Config.ModulePath,value);
+}
+
+void configLoadModules(char *value) {
+	strcpy(Config.LoadModules,value);
 }

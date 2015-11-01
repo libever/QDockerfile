@@ -3,12 +3,12 @@
 #include <dirent.h>
 #include <string.h>
 #include <dlfcn.h>
+#include <stdarg.h>
 
 void run_so_file(char* so_name,char* so_entry,int argc,char** argv);
 void printfRed(char *format,...);
 
 int main(int argc, char** argv){
-	printfRed("%s\n");
 	DIR *dir = opendir(".");
 	struct dirent *dirent;
 	char *soend;
@@ -40,19 +40,42 @@ void run_so_file(char* so_name,char* so_entry,int argc,char** argv){
 	if(sofp != NULL) {
 		funfp = dlsym(sofp,so_entry);
 		if(funfp == NULL) {
-			printf("%s.so HAS NO SO_ENTRY : %s \n",so_name,so_entry);
+			printfRed("%s.so HAS NO SO_ENTRY : %s \n",so_name,so_entry);
 		} else {
 			funfp(argc,argv);
 		}
 	} else {
-		printf("LOAD FAILED : %s.so\n",so_name);
+		printfRed("LOAD FAILED : %s.so\n",so_name);
 	}
 }
 
 void printfRed(char *format,...){
+	char formatstr[2] = "% ";
+	char *fpos = format;
+	va_list arg_ptr;
 	printf("\033[0;31m");
-	printf("Hello I am red ");
-	/*printf("%s\033[0;0m",message);*/
+	va_start(arg_ptr,format);
+	while(*fpos != '\0'){
+		if(*fpos == '%') {
+			fpos++;	
+			formatstr[1] = *fpos;
+			switch(formatstr[1]) {
+				case 'd':
+					printf("%d",va_arg(arg_ptr,int));
+					break;
+				case 's':
+					printf("%s",va_arg(arg_ptr,char*));
+					break;
+				default:
+					printfRed("FORMAT %s NOT SUPPORT",formatstr);
+					return ;
+			}
+		} else {
+			printf("%c",*fpos);
+		}
+		fpos++;
+	}
+	va_end(arg_ptr);
 	printf("\033[0;0m");
 }
 
