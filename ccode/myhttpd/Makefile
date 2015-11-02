@@ -3,10 +3,10 @@ params=-g -Wall -W
 all: myhttpd libmymodule
 
 myhttpd: myhttpd.c net.o handler.o config.o color.o mycgi.o module.o react.o modules
-	gcc ${params}  -lpthread -o myhttpd myhttpd.c net.o handler.o config.o color.o mycgi.o module.o react.o
+	gcc ${params}  -lpthread -ldl -o myhttpd myhttpd.c net.o handler.o config.o color.o mycgi.o module.o react.o
 
 net.o:net.c net.h
-	gcc ${params} -c net.c
+	gcc ${params}  -fPIC -c net.c
 
 handler.o:handler.c handler.h
 	gcc ${params} -c handler.c
@@ -24,7 +24,7 @@ module.o:module.c module.h
 	gcc ${params} -c module.c
 
 react.o:react.c react.h
-	gcc ${params} -c react.c
+	gcc ${params} -fPIC -c react.c
 
 libmymodule:react.o net.o
 	ar rcs libmymodule.a react.o net.o
