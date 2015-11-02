@@ -1,8 +1,8 @@
 params=-g -Wall -W
 
-all: myhttpd
+all: myhttpd libmymodule
 
-myhttpd: myhttpd.c net.o handler.o config.o color.o mycgi.o module.o react.o
+myhttpd: myhttpd.c net.o handler.o config.o color.o mycgi.o module.o react.o modules
 	gcc ${params}  -lpthread -o myhttpd myhttpd.c net.o handler.o config.o color.o mycgi.o module.o react.o
 
 net.o:net.c net.h
@@ -26,8 +26,13 @@ module.o:module.c module.h
 react.o:react.c react.h
 	gcc ${params} -c react.c
 
+libmymodule:react.o net.o
+	ar rcs libmymodule.a react.o net.o
+
+modules:libmymodule
+	cd modules && make
+
 clean:
-	rm myhttpd *.o
+	rm -f myhttpd *.o
 	rm -rf myhttpd.dSYM
-	rm modules/*.o
-	rm modules/*.so
+	cd modules && make clean
