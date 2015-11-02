@@ -8,7 +8,7 @@ void (*handler)(NClient *);
 } module_t;
 
 typedef struct ori_module_list{
-	module_t module;
+	module_t *module;
 	struct ori_module_list *next;
 } module_list;
 

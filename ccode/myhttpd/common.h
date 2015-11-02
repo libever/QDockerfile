@@ -15,6 +15,6 @@
 typedef enum BOOLEAN {TRUE,FALSE} BOOL;
 
 #define LOG if(Config.DEBUG == TRUE) printf
-#define cblank(c) ( c == ' ' || c == '\n' || c == '\r' || c == '\t')
+#define cblank(c) ( c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == '\0')
 
 #endif

@@ -2,9 +2,12 @@
 #include "common.h"
 #include "config.h"
 #include "mycgi.h"
+#include "module.h"
 #include <pthread.h>
 #include <time.h>
 #include<sys/stat.h>
+
+extern module_list *mlist;
 
 static pid_t currentPid;
 static mimetype all_types[] = {
@@ -34,15 +37,15 @@ void loopMainHandler(NServer *myServer) {
 		currentPid = getpid();
 		while(1){
 			client = readMyClient(myServer,90);		
-            if(TRUE == Config.NOTHREAD) {
-                loopRequest((void*)client);
-            } else {
-                if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
-			    	ExitMessage("thread create failed ... ");
-			    }
+			if(TRUE == Config.NOTHREAD) {
+				loopRequest((void*)client);
+			} else {
+				if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
+					ExitMessage("thread create failed ... ");
+				}
 
-            }
-        }
+			}
+		}
 	} else {
 		for ( ; process_count < process_born ; process_count++) {
 			fpid = fork();
@@ -54,13 +57,13 @@ void loopMainHandler(NServer *myServer) {
 				currentPid = getpid();
 				while(1){
 					client = readMyClient(myServer,90);		
-                    if(Config.NOTHREAD) {
-                        loopRequest((void*)client);
-                    } else {
-                        if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
-                            ExitMessage("thread create failed ... ");
-                        }
-                    }
+					if(Config.NOTHREAD) {
+						loopRequest((void*)client);
+					} else {
+						if(pthread_create(&newthread , NULL, loopRequest, (void *) client) != 0) {
+							ExitMessage("thread create failed ... ");
+						}
+					}
 				}
 			}
 		}
@@ -80,6 +83,7 @@ void * loopRequest(void *arg){
 	int (*handlerList[])(NClient *)  = {
 		handlePathPermission,
 		handleFilePermission,
+		handleBySoModule,
 		handleBySendFileContent,
 		handlePostData,
 		cgiRequest,
@@ -156,7 +160,7 @@ int handleFilePermission(NClient *client){
 		}
 		typepos++;
 	}
-	
+
 	if(strcasecmp("cgi",file_ext_pos) == 0 ) {
 		client->isCgi = TRUE;	
 	} else {
@@ -198,7 +202,6 @@ int handleBySendFileContent(NClient *client){
 	if( TRUE == isPathDir(file_path) ) {
 		strcat(file_path,"index.html");	
 		client->content_type = CONTENT_TYPE_HTML;
-		printf("NO CONTENT_TYPE : %s\n",client->content_type);
 	}
 	fp = fopen(file_path,"rb");
 
@@ -249,12 +252,12 @@ int cgiRequest(NClient* client) {
 	FILE *cgiFp;
 	bzero(response,Config.MaxResponseLen);
 	if (client->isCgi == TRUE) {
-		 cgiFp = fopen(client->realFilePath,"r");
-		 if(cgiFp == NULL) {
-			 free(response);
-			 return CONTINUE;
-		 }
-		 fclose(cgiFp);
+		cgiFp = fopen(client->realFilePath,"r");
+		if(cgiFp == NULL) {
+			free(response);
+			return CONTINUE;
+		}
+		fclose(cgiFp);
 
 		if( TRUE == doMyCgiRequest(client,response,Config.MaxResponseLen) ){
 			cgiContent(client,response);
@@ -266,6 +269,20 @@ int cgiRequest(NClient* client) {
 	}
 	free(response);
 	return CONTINUE;
+}
+
+//处理so模块处理
+int handleBySoModule(NClient *client){
+	module_list *m = mlist;
+	if(mlist != NULL) {
+		while ( m != NULL && m->module!= NULL && m->module->handler != NULL) {
+			m->module->handler(client);	
+			m = m->next;
+		}
+		return CONTINUE;
+	} else {
+		return CONTINUE;	
+	}
 }
 
 void infoClientList(NClient *client,char** messageList,int sizeList[],char* contentType) {
@@ -297,11 +314,11 @@ Content-Length: %d \r\n\
 
 	writeData(client,text,endpos - text);
 
-// 在linux centos7 上运行，收不到内容的响应，暂时改成一次性发送内容
-//	do {
-//		writeData(client,*scanPos,strlen(*scanPos));
-//		scanPos++;
-//	} while(*scanPos != NULL);
+	// 在linux centos7 上运行，收不到内容的响应，暂时改成一次性发送内容
+	//	do {
+	//		writeData(client,*scanPos,strlen(*scanPos));
+	//		scanPos++;
+	//	} while(*scanPos != NULL);
 
 	//清理之前malloc的内容资源	
 	scanPos = messageList;
@@ -333,32 +350,32 @@ Content-Length: %d \r\n\
 }
 
 int notFindRequest(NClient *client) {
-		char *notFindMessage = "<h1>Sorry I can't find your file . </h1>\n";
-		char text[2048] = {'\0'};
-		char *messageTpl = "HTTP/1.1 404 Not Found\r\n\
+	char *notFindMessage = "<h1>Sorry I can't find your file . </h1>\n";
+	char text[2048] = {'\0'};
+	char *messageTpl = "HTTP/1.1 404 Not Found\r\n\
 Server: myhttp\r\n\
 Content-Type: %s \r\n\
 Content-Length: %d \r\n\
 Connection: closed \r\n\
 \r\n\
 %s";
-		sprintf(text,messageTpl,CONTENT_TYPE_HTML,strlen(notFindMessage),notFindMessage);
-		writeData(client,text,strlen(text));
-		return HANDLED;
+	sprintf(text,messageTpl,CONTENT_TYPE_HTML,strlen(notFindMessage),notFindMessage);
+	writeData(client,text,strlen(text));
+	return HANDLED;
 }
 
 void serverInternalError(NClient *client,char* errorMessage) {
-		char *noPermissonMessage = "<h1>Sorry You have no permission ! </h1>\n";
-		char text[2048] = {'\0'};
-		char *messageTpl = "HTTP/1.1 500 SERVER ERROR\r\n\
+	char *noPermissonMessage = "<h1>Sorry You have no permission ! </h1>\n";
+	char text[2048] = {'\0'};
+	char *messageTpl = "HTTP/1.1 500 SERVER ERROR\r\n\
 Server: myhttp\r\n\
 Content-Type: %s \r\n\
 Content-Length: %d \r\n\
 Connection: closed \r\n\
 \r\n\
 %s%s";
-		sprintf(text,messageTpl,CONTENT_TYPE_HTML,strlen(errorMessage) + strlen(noPermissonMessage) ,noPermissonMessage,errorMessage);
-		writeData(client,text,strlen(text));
+	sprintf(text,messageTpl,CONTENT_TYPE_HTML,strlen(errorMessage) + strlen(noPermissonMessage) ,noPermissonMessage,errorMessage);
+	writeData(client,text,strlen(text));
 }
 
 void cgiContent(NClient *client,char* buffer) {

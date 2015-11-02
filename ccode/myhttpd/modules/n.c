@@ -2,7 +2,7 @@
 #include "../module.h"
 
 void handler(NClient *client){
-	printf("\n......................................MY MODULE \n ");
+	printf("......................................MY MODULE ");
 }
 
 module_t* init_module(){

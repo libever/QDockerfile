@@ -22,6 +22,7 @@ int cgiRequest(NClient *);
 int notFindRequest(NClient *);
 int handleFilePermission(NClient *);
 int handlePathPermission(NClient *);
+int handleBySoModule(NClient *);
 
 void infoClient(NClient *,char*,char*);
 void infoClientList(NClient *,char**,int[],char*);
