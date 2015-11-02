@@ -33,6 +33,7 @@ modules:libmymodule
 	cd modules && make
 
 clean:
+	rm -f libmymodule.a
 	rm -f myhttpd *.o
 	rm -rf myhttpd.dSYM
 	cd modules && make clean
