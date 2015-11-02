@@ -20,6 +20,7 @@ int main(int argc, char** argv){
 	printf("\n");
 	initConfig(configFile);
 	myServer = initNServer(Config.PORT,Config.ProcessBorn,Config.DocumentRoot);
+	mlist = init_module_list(Config.ModulePath,Config.LoadModules);
 	signal(SIGINT, StopServer); 
 	LOG("INIT server AT %d \n\n",Config.PORT);
 	openServer(myServer);
