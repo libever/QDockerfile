@@ -1,12 +1,4 @@
 #include "handler.h"
-#include "common.h"
-#include "config.h"
-#include "mycgi.h"
-#include "module.h"
-#include "react.h"
-#include <pthread.h>
-#include <time.h>
-#include<sys/stat.h>
 
 extern module_list *mlist;
 

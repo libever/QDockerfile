@@ -2,8 +2,17 @@
 #define MYHTTPD_HANDLER_H
 
 #include "net.h"
+#include "common.h"
+#include "config.h"
+#include "mycgi.h"
+#include "module.h"
+#include "react.h"
+
 #include <pthread.h>
 #include <sys/wait.h>
+#include <pthread.h>
+#include <time.h>
+#include <sys/stat.h>
 
 typedef struct {
 	char *file_ext;

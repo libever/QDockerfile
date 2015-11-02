@@ -1,6 +1,4 @@
 #include "react.h"
-#include "net.h"
-#include "config.h"
 
 void infoClientList(NClient *client,char** messageList,int sizeList[],char* contentType) {
 	char **scanPos = messageList;

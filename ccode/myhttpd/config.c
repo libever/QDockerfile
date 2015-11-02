@@ -1,4 +1,3 @@
-#include "common.h"
 #include "config.h"
 
 void initConfig(char *fileName) {

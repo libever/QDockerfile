@@ -1,6 +1,4 @@
 #include "net.h"
-#include "config.h"
-#include "common.h"
 
 void openServer(NServer *myServer) {
 	if (bind(myServer->serverSocket, (struct sockaddr *)&myServer->bindAddress, sizeof(myServer->bindAddress)) < 0) {

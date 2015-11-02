@@ -1,6 +1,4 @@
 #include "mycgi.h"
-#include "handler.h"
-#include "react.h"
 
 BOOL doMyCgiRequest(NClient *client,char* response,int max_len){
 	int cgi_out[2],cgi_input[2];

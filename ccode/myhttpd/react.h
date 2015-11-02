@@ -2,6 +2,7 @@
 #define MYHTTPD_REACT_H
 
 #include "net.h"
+#include "config.h"
 
 #define HANDLED 1
 #define CONTINUE 2 

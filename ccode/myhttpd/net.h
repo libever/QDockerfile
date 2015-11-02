@@ -2,6 +2,7 @@
 #define MYHTTPD_NET_H
 
 #include "common.h"
+#include "config.h"
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>

@@ -1,8 +1,4 @@
 #include "myhttpd.h"
-#include "common.h"
-#include "net.h"
-#include "config.h"
-#include "handler.h"
 
 void StopServer(){
 	closeServer(myServer);

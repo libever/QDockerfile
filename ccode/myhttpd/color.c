@@ -1,5 +1,4 @@
 #include "color.h"
-#include <stdarg.h>
 
 void printfGreen(char *message){
 	printf("\033[0;32m%s\033[0;0m",message);
