@@ -57,7 +57,7 @@ module_list *init_module_list(char *module_path, char *load_modules) {
 				end = end->next;
 			}
 		} else {
-			printfRed("LOAD FAILED : %s.so\n",so_path);
+			printfRed("LOAD FAILED : %s \n",so_path);
 		}
 	}
 

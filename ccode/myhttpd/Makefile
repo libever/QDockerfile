@@ -2,8 +2,8 @@ params=-g -Wall -W
 
 all: myhttpd
 
-myhttpd: myhttpd.c net.o handler.o config.o color.o mycgi.o module.o
-	gcc ${params}  -lpthread -o myhttpd myhttpd.c net.o handler.o config.o color.o mycgi.o module.o
+myhttpd: myhttpd.c net.o handler.o config.o color.o mycgi.o module.o react.o
+	gcc ${params}  -lpthread -o myhttpd myhttpd.c net.o handler.o config.o color.o mycgi.o module.o react.o
 
 net.o:net.c net.h
 	gcc ${params} -c net.c
@@ -22,6 +22,9 @@ mycgi.o:mycgi.c mycgi.h common.h
 
 module.o:module.c module.h
 	gcc ${params} -c module.c
+
+react.o:react.c react.h
+	gcc ${params} -c react.c
 
 clean:
 	rm myhttpd *.o

@@ -1,3 +1,4 @@
+#include "../react.h"
 #include "../net.h"
 #include "../module.h"
 #include "../handler.h"
