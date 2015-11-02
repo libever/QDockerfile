@@ -4,6 +4,6 @@
 #include <stdio.h>
 
 void printfGreen(char*);
-void printfRed(char*);
+void printfRed(char*,...);
 
 #endif
