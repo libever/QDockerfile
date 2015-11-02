@@ -4,7 +4,7 @@
 #include "net.h"
 
 typedef struct {
-void (*handler)(NClient *);
+	int (*handler)(NClient *);
 } module_t;
 
 typedef struct ori_module_list{

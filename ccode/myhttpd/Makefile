@@ -1,6 +1,6 @@
 params=-g -Wall -W
 
-all: myhttpd 
+all: myhttpd
 
 myhttpd: myhttpd.c net.o handler.o config.o color.o mycgi.o module.o
 	gcc ${params}  -lpthread -o myhttpd myhttpd.c net.o handler.o config.o color.o mycgi.o module.o
@@ -26,3 +26,5 @@ module.o:module.c module.h
 clean:
 	rm myhttpd *.o
 	rm -rf myhttpd.dSYM
+	rm modules/*.o
+	rm modules/*.so

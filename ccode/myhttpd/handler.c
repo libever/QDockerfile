@@ -274,12 +274,24 @@ int cgiRequest(NClient* client) {
 //处理so模块处理
 int handleBySoModule(NClient *client){
 	module_list *m = mlist;
+	int requestRes;
 	if(mlist != NULL) {
 		while ( m != NULL && m->module!= NULL && m->module->handler != NULL) {
-			m->module->handler(client);	
-			m = m->next;
+			requestRes = m->module->handler(client);	
+			switch(requestRes) {
+				case HANDLED:
+					return HANDLED;
+					break;
+				case CONTINUE:
+					m = m->next;
+					break;
+				default :
+					printfRed("YOUR RETURN INVALID \n");
+					m = m->next;
+					break;
+			}
 		}
-		return CONTINUE;
+		return requestRes;
 	} else {
 		return CONTINUE;	
 	}

@@ -1,8 +1,10 @@
 #include "../net.h"
 #include "../module.h"
+#include "../handler.h"
 
-void handler(NClient *client){
-	printf("\n......................................MY MODULE \n ");
+int handler(NClient *client){
+	printf("\n....ONE m.c............MY MODULE \n ");
+	return CONTINUE;
 }
 
 module_t* init_module(){
