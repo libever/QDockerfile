@@ -1,6 +1,4 @@
 #!/bin/sh
 
-gcc -c m.c
-gcc -c n.c
-gcc -shared -fPIC -o m.so m.o ../react.o ../net.o
-gcc -shared -fPIC -o n.so n.o ../react.o ../net.o
+gcc -shared -fPIC -o m.so m.c -lmymodule -L ../
+gcc -shared -fPIC -o n.so n.c -lmymodule -L ../
