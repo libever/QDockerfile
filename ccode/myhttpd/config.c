@@ -56,7 +56,7 @@ void configLine(char *line){
 	ConfigEntry *scanPos = entryList;
 
 	while(scanPos->configName != NULL) {
-		printf("%s >>>>>>>>>> %s\n",configName,scanPos->configName);
+		//printf("%s >>>>>>>>>> %s\n",configName,scanPos->configName);
 		if(strcmp(configName,scanPos->configName) == 0) {
 			return scanPos->configFun(configValue);	
 		}
