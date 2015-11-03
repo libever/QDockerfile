@@ -5,6 +5,7 @@
 
 typedef struct {
 	int (*handler)(NClient *);
+	void (*serverHandler)(NServer *);
 } module_t;
 
 typedef struct ori_module_list{

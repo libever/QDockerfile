@@ -4,6 +4,18 @@ void StopServer(){
 	closeServer(myServer);
 }
 
+void RunSoServer(){
+	module_list *m = mlist;
+	if(mlist != NULL) {
+		while ( m != NULL && m->module!= NULL ) {
+			if(m->module->serverHandler != NULL) {
+				m->module->serverHandler(myServer);	
+			}
+			m = m->next;
+		}
+	} 
+}
+
 int main(int argc, char** argv){
 
 	char *configFile = "./etc/myhttpd.conf";
@@ -13,8 +25,9 @@ int main(int argc, char** argv){
 	printfGreen(">>>>>>>>>>>>>>>>>>>>>>>>>>>>    <<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
 	printf("\n");
 	initConfig(configFile);
-	myServer = initNServer(Config.PORT,Config.ProcessBorn,Config.DocumentRoot);
+	myServer = initNServer(Config.Port,Config.ProcessBorn,Config.DocumentRoot);
 	mlist = init_module_list(Config.ModulePath,Config.LoadModules);
+	RunSoServer();
 	signal(SIGINT, StopServer); 
 	openServer(myServer);
 	loopServer(myServer,loopMainHandler);

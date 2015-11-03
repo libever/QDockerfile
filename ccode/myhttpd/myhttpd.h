@@ -6,11 +6,13 @@
 #include "common.h"
 #include "config.h"
 #include "handler.h"
+#include "log.h"
 
 #include <signal.h>
 static NServer *myServer;
 module_list *mlist;
 
 void StopServer();
+void RunSoServer();
 
 #endif

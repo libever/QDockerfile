@@ -1,7 +1,5 @@
-#include "../react.h"
-#include "../net.h"
-#include "../module.h"
-#include "../handler.h"
+#include <react.h>
+#include <module.h>
 
 int handler(NClient *client){
 	printf("\n OTHER : ......... n.c ........MY MODULE \n");
