@@ -38,23 +38,25 @@ void configLine(char *line){
 	printf("%s:%s\n",configName,configValue);
 	
 	ConfigEntry entryList[] = {
-		{"PROCESS_BORN",configProcessBorn},
-		{"DEBUG",configDEBUG},
-		{"PORT",configPort},
-		{"DOCUMENT_ROOT",configDocumentRoot},
-		{"MAX_RESPONSE_LEN",configMaxResponseLen},
-		{"MAX_BLOCKS",configMaxBlocks},
-		{"BLOCK_SIZE",configBlockSize},
-		{"NOTHREAD",configThread},
-		{"LOG_PATH",configLogPath},
-		{"MODULE_PATH",configModulePath},
-		{"LOAD_MODULES",configLoadModules},
+		CONFIG_ENTRY_ITEM(DEBUG),
+		CONFIG_ENTRY_ITEM(Port),
+		CONFIG_ENTRY_ITEM(ProcessBorn),
+		CONFIG_ENTRY_ITEM(DocumentRoot),
+		CONFIG_ENTRY_ITEM(MaxResponseLen),
+		CONFIG_ENTRY_ITEM(MaxBlocks),
+		CONFIG_ENTRY_ITEM(BlockSize),
+		CONFIG_ENTRY_ITEM(NOTHREAD),
+		CONFIG_ENTRY_ITEM(LogPath),
+		CONFIG_ENTRY_ITEM(ModulePath),
+		CONFIG_ENTRY_ITEM(LoadModules),
+		CONFIG_ENTRY_ITEM(MaxLogSize),
 		{NULL,NULL}
 	};
 
 	ConfigEntry *scanPos = entryList;
 
 	while(scanPos->configName != NULL) {
+		printf("%s >>>>>>>>>> %s\n",configName,scanPos->configName);
 		if(strcmp(configName,scanPos->configName) == 0) {
 			return scanPos->configFun(configValue);	
 		}
@@ -105,46 +107,21 @@ void configReadLine(FILE **fpp,char *buf, int size) {
 	strcpy(buf,tmp_line);
 }
 
-void configProcessBorn(char *value) { 
-	Config.ProcessBorn = atoi(value);
-}
 
-void configDEBUG(char *value) { 
-	Config.DEBUG = strncasecmp(value,"TRUE",4) == 0 ? TRUE : FALSE;
-}
+//整形配置函数
+CONFIG_INT_FUN(MaxLogSize)
+CONFIG_INT_FUN(ProcessBorn)
+CONFIG_INT_FUN(Port)
+CONFIG_INT_FUN(MaxResponseLen)
+CONFIG_INT_FUN(BlockSize)
+CONFIG_INT_FUN(MaxBlocks)
 
-void configThread(char *value) {
-	Config.NOTHREAD = strncasecmp(value,"TRUE",4) == 0 ? TRUE : FALSE;
-}
+//布尔配置函数
+CONFIG_BOOL_FUN(DEBUG)
+CONFIG_BOOL_FUN(NOTHREAD)
 
-void configPort(char *value) { 
-	Config.PORT= atoi(value);
-}
-
-void configMaxResponseLen(char *value) { 
-	Config.MaxResponseLen= atoi(value);
-}
-
-void configDocumentRoot(char *value){
-	strcpy(Config.DocumentRoot,value);
-}
-
-void configBlockSize(char *value) { 
-	Config.BlockSize = atoi(value);
-}
-
-void configMaxBlocks(char *value) { 
-	Config.MaxBlocks= atoi(value);
-}
-
-void configLogPath(char *value) {
-	strcpy(Config.LogPath,value);
-}
-
-void configModulePath(char *value) {
-	strcpy(Config.ModulePath,value);
-}
-
-void configLoadModules(char *value) {
-	strcpy(Config.LoadModules,value);
-}
+//字符串配置函数
+CONFIG_STR_FUN(DocumentRoot);
+CONFIG_STR_FUN(LogPath);
+CONFIG_STR_FUN(ModulePath);
+CONFIG_STR_FUN(LoadModules);
