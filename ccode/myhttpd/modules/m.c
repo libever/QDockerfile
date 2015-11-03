@@ -3,8 +3,9 @@
 #include <module.h>
 
 int handler(NClient *client){
-	infoClient(client,"<h1>OK ..... Hello world</h1>",CONTENT_TYPE_HTML);
-	return HANDLED;
+	return CONTINUE;
+	/*infoClient(client,"<h1>OK ..... Hello world</h1>",CONTENT_TYPE_HTML);*/
+	/*return HANDLED;*/
 }
 
 void serverHandler(NServer *server){

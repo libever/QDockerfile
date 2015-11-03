@@ -2,7 +2,6 @@
 #include <module.h>
 
 int handler(NClient *client){
-	printf("\n OTHER : ......... n.c ........MY MODULE \n");
 	return CONTINUE;
 }
 
