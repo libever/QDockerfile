@@ -2,6 +2,7 @@
 #include <module.h>
 
 int handler(NClient *client){
+    //printf("Module n.c \n");
 	return CONTINUE;
 }
 
