@@ -6,7 +6,7 @@
 module_list *init_module_list(char *module_path, char *load_modules) {
 	module_t* (*funfp)();
 	module_list *end;
-	module_list *mlist = (module_list*) malloc(sizeof(module_list));
+	module_list *mlist ; 
 	char *module_name[10];
 	char *pos = load_modules;
 	int module_index = 0;
@@ -16,7 +16,6 @@ module_list *init_module_list(char *module_path, char *load_modules) {
 	void *sofp;
 
 	if(module_path == NULL || strlen(module_path) < 2 || load_modules == NULL || strlen(load_modules) < 2) {
-		free(mlist);
 		return NULL;	
 	}
 
@@ -42,7 +41,6 @@ module_list *init_module_list(char *module_path, char *load_modules) {
 
 	module_count = module_index + 1;
 
-	end = mlist;
 	for(module_index = 0 ; module_index < module_count;module_index++){
 		bzero(so_path,128);
 		sprintf(so_path,"%s/%s.so",module_path,module_name[module_index]);
@@ -52,16 +50,20 @@ module_list *init_module_list(char *module_path, char *load_modules) {
 			if(funfp == NULL) {
 				printfRed("%s.so HAS NO SO_ENTRY : %s \n",so_path,"init_module");
 			} else {
+                if(module_index == 0) {
+                    end = (module_list*) malloc(sizeof(module_list));
+                    mlist = end;            
+                } else {
+                    end->next = (module_list*) malloc(sizeof(module_list)); 
+                    end = end->next;
+                }
 				end->module = funfp();
-				end->next = (module_list*)malloc(sizeof(module_list));
-				end = end->next;
 			}
 		} else {
 			printfRed("LOAD FAILED : %s \n",so_path);
 		}
 	}
 
-	free(end);
 	end = NULL;
 
 	return mlist;
