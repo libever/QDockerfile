@@ -4,7 +4,8 @@ cd /sw
 
 cd redis-3.0.0/src
 sed -i 's/PREFIX?=\/usr\/local/PREFIX?=\/redis/g' Makefile
-make USE_TCMALLOC=yes
+#make USE_TCMALLOC=yes
+make USE_JEMALLOC=yes
 make install
 
 cd /redis
