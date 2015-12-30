@@ -9,4 +9,4 @@ RUN cd ssdb-master && make && make install
 
 RUN ls /usr/local/ssdb
 
-ENTRYPOINT /usr/local/ssdb/ssdb-server /usr/local/ssdb/ssdb.conf && /bin/bash
+ENTRYPOINT /usr/local/ssdb/ssdb-server -d /usr/local/ssdb/ssdb.conf && /bin/bash

@@ -7,7 +7,7 @@ image_name=qdocker/ssdb:7
 docker_name=ssdb
 screen_name=docker${docker_name}
 blackhole_real_dir="../code/$screen_name"
-o_ports=" -p 9001:9001"
+o_ports=" -p 8888:8888"
 other_params="  "
 
 #end custom_edit_code 
