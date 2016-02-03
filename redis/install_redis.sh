@@ -13,6 +13,6 @@ mkdir etc
 cd etc
 cp /sw/redis-3.0.0/redis.conf .
 
-sed -i 's/daemonize no/daemonize yes/g' redis.conf
+#sed -i 's/daemonize no/daemonize yes/g' redis.conf
 
 #cat redis.conf | grep daemonize

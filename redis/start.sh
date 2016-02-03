@@ -9,7 +9,7 @@ else
 fi
 
 mkdir -p $vdir
-dparams="--name redis -i -t -p 8001:6379 -v $vdir:/blackhole "
+dparams="--name redis -d -p 8001:6379 -v $vdir:/blackhole "
 
 r=$(docker exec redis /bin/sh -c "echo OK" 2>&1 )
 #echo $r
