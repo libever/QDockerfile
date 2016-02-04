@@ -1,0 +1,23 @@
+#first must be the service name
+lnmpweb:
+    image: "qdocker/nginx:7"
+    volumes: 
+        - /data0/lnmp/www/:/nginx/html
+    ports: 
+        - 10800:80
+    links:
+        - lnmpphp:php5
+          
+lnmpphp:
+    image: "qdocker/php5:7"
+    ports: 
+        - 127.0.0.1:10900:9000
+    volumes: 
+        - /data0/lnmp/www/:/nginx/html
+    links: 
+        - lnmpmysql:mysql56
+
+lnmpmysql:
+    image: "qdocker/mysql56:7"
+    ports: 
+        - 127.0.0.1:12306:3306
