@@ -8,6 +8,7 @@ ADD mysql-5.6.21.tar.gz /sw/
 ADD install_mysql.sh /sw/mysql-5.6.21/install_mysql.sh
 ADD my.cnf  /sw/mysql-5.6.21/my.cnf
 RUN /bin/sh /sw/mysql-5.6.21/install_mysql.sh
-RUN echo "nohup /mysql5/bin/mysqld_safe /mysql5/bin/mysqld_safe > /mysql5/run.log 2>&1 & " > /etc/rc.local
+Add set_root_pwd.sh /sw/set_root_pwd.sh
+RUN /bin/bash /sw/set_root_pwd.sh
 
-ENTRYPOINT /bin/bash /etc/rc.local && /bin/bash
+ENTRYPOINT /mysql5/bin/mysqld_safe --defaults-file=/mysql5/my.cnf
