@@ -11,6 +11,11 @@ git clone https://github.com/lovely-codes/QDockerfile.git
 
 cd QDockerfile
 
+cd base 
+pwd
+sh build.sh
+cd ..
+
 cd nginx
 pwd
 sh build.sh
