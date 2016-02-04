@@ -24,3 +24,8 @@ cd ..
 cd mysql5.6
 pwd
 sh build.sh
+cd ..
+
+cd docker-compose-projects/lnmp
+docker-compose up -d 
+
