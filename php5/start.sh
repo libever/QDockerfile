@@ -8,7 +8,7 @@ else
 	vdir=$(readlink -f "../code/dockerphp5")	
 fi
 mkdir -p $vdir
-dparams="--name php5 -i -t -p 9000  -v $vdir:/blckhole -w /blackhole "
+dparams="--name php5 -d -p 9000  -v $vdir:/blckhole -w /blackhole "
 dparams="$dparams --privileged=true "
 
 r=$(docker exec php5 /bin/sh -c "echo OK" 2>&1 )
