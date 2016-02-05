@@ -2,7 +2,7 @@
 lnmpweb:
     image: "qdocker/nginx:7"
     volumes: 
-        - /data0/lnmp/www/:/nginx/html
+        - ./www/:/nginx/html
     ports: 
         - 10800:80
     links:
@@ -13,7 +13,7 @@ lnmpphp:
     ports: 
         - 127.0.0.1:10900:9000
     volumes: 
-        - /data0/lnmp/www/:/nginx/html
+        - ./www/:/nginx/html
     links: 
         - lnmpmysql:mysql56
 
