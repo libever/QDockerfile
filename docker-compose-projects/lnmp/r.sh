@@ -13,7 +13,7 @@ mkdir download
 [ -s "centos-7-x86_64.tar.gz" ] && mv centos-7-x86_64.tar.gz download
 cd download
 
-[  ! -s "$adir/centos-7-x86_64.tar.gz" ] && wget  http://download.openvz.org/template/precreated/centos-7-x86_64.tar.gz
+[  ! -s "centos-7-x86_64.tar.gz" ] && wget  http://download.openvz.org/template/precreated/centos-7-x86_64.tar.gz
 cat centos-7-x86_64.tar.gz | docker import - xcentos:7
 
 git clone https://github.com/lovely-codes/QDockerfile.git
