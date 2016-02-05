@@ -2,7 +2,7 @@
 
 adir=$(pwd)
 
-[ -s "mysql-5.6.21.tar.gz" ] && echo "NEED FILES mysql-5.6.21.tar.gz " && exit
+[ ! -s "mysql-5.6.21.tar.gz" ] && echo "NEED FILES mysql-5.6.21.tar.gz " && exit
 
 echo "NEED FILES centos-7-x86_64.tar.gz "
 echo "We can help you download that."
