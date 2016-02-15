@@ -1,5 +1,13 @@
 #!/bin/sh
 
+if [ $(getenforce) != "Disabled" ] ; 
+then 
+	echo "NEED SELINUX  Disabled  ..... "; 
+	exit
+fi
+
+
+
 adir=$(pwd)
 
 [ ! -s "mysql-5.6.21.tar.gz" ] && echo "NEED FILES mysql-5.6.21.tar.gz " && exit
