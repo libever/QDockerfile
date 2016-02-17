@@ -9,7 +9,7 @@ then
 else 
 	echo "can't find file : go1.4.2.linux-amd64.tar.gz"
 	echo "download...."
-	wget -t 3 --timeout 180 "http://www.golangtc.com/static/go/go1.4.2/go1.4.2.linux-386.tar.gz"
+	wget -t 3 --timeout 180 "http://www.golangtc.com/static/go/go1.4.2/go1.4.2.linux-amd64.tar.gz"
 	if [ $? -eq 0 ]
 	then
 		sh build.sh
