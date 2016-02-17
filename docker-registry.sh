@@ -59,4 +59,4 @@ cp Dockerfile Dockerfile.bk
 cp ../Dockerfile Dockerfile
 
 mkdir -p  /var/lib/registry
-docker build -t qdocker/registry .  && echo "BUILD FINISHED : RUN registry : " && echo "" &&  echo "docker run -d qdocker/registry "
+docker build -t qdocker/registry .  && echo "BUILD FINISHED : RUN registry : " && echo "" &&  echo "docker run -d qdocker/registry " && echo "OR USE THIS CMD : " echo "docker run -d -e SETTINGS_FLAVOR=dev -e STORAGE_PATH=/tmp/registry -v /db/docker-images:/tmp/registry -p 5000:5000 registry"
