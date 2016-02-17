@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo "This version is golang1.4 "
+echo "ENTER TO CONTINUE ..."
+read m
 if [ -f ./go1.4.2.linux-amd64.tar.gz ]
 then
 	docker build -t qdocker/golang:7 .
