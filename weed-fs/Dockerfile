@@ -8,4 +8,4 @@ EXPOSE 9333
 
 ENV WEED_HOME /weed-fs/seaweedfs
 
-#ENTRYPOINT ["/weed-fs/seaweedfs/weed"]
+ENTRYPOINT ["/weed-fs/seaweedfs/weed"]
