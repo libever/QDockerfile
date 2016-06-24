@@ -1,0 +1,5 @@
+#! /bin/sh  
+mkdir -p /ssh_log  
+IP=$(echo $1 | grep -oP "((?:(?:25[0-5]|2[0-4]d|[01]?d?d).){3}(?:25[0-5]|2[0-4]d|[01]?d?d))")  
+LOGNAME=${IP}_$(date +"%Y%m%d_%T")  
+ssh_ori $@ | tee -a /ssh_log/${LOGNAME}.log 
