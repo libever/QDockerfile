@@ -15,7 +15,7 @@ RUN yum install -y openssh-server sudo
 RUN sed -i 's/UsePAM yes/UsePAM no/g' /etc/ssh/sshd_config
 RUN useradd admin 
 RUN echo "admin:7c43568dd60fd7fa6e393d5341d011d7" | chpasswd
-RUN echo "admin   ALL=(ALL)       ALL" >> /etc/sudoers
+RUN echo "admin   ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
 RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
 RUN mkdir /var/run/sshd
